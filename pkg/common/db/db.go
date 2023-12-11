@@ -1,22 +1,19 @@
 package db
 
 import (
-	"log"
-
 	"github.com/stclaird/quizzie.cloud/pkg/common/models"
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
-func Init(url string) *gorm.DB {
+func Init(dbPath string)  ( *gorm.DB, error) {
 	//Init the DataBase
-    db, err := gorm.Open(postgres.Open(url), &gorm.Config{})
 
-    if err != nil {
-        log.Fatalln(err)
-    }
+	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+    db.AutoMigrate(&models.Question{}, &models.Answer{})
 
-    db.AutoMigrate(&models.Book{})
-
-    return db
+    return db, err
 }

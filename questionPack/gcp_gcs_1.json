@@ -1,0 +1,60 @@
+[
+    {
+        "text" : "What is the maximum amount of the buckets per project?",
+        "type" : "multichoice",
+        "category" : "gcp",
+        "subcategory" : "gcs",
+        "dateAdded" : "2023-11",
+        "answers" : [
+            {
+                "text" : "10 Buckets initially. You will contact support to request additional buckets",
+                "iscorrect" : false
+            },
+            {
+                "text" : "Unlimited buckets",
+                "iscorrect" : true
+            }
+        ]
+    },
+    {
+        "text" : "Which of the following statements is true?",
+        "type" : "binary",
+        "category" : "gcp",
+        "subcategory" : "gcs",
+        "dateAdded" : "2023-11",
+        "answers" : [
+            {
+                "text" : "A bucket name must be unique within your project.",
+                "iscorrect" : false
+            },
+            {
+                "text" : "A bucket name must be globally unique across any project regardless of owners.",
+                "iscorrect" : true
+            }
+        ]
+    },
+    {
+        "text" : "Which of the following describes the process of renaming a GCS bucket?",
+        "type" : "multichoice",
+        "category" : "gcp",
+        "subcategory" : "gcs",
+        "answers" : [
+            {
+                "text" : "Switch the bucket to readonly mode and rename the bucket, saving it first.",
+                "iscorrect" : false
+            },
+            {
+                "text" : "Use the copy bucket function, choose the bucket you wish as the source bucket. and the desired name for the destination bucket. The bucket new bucket will be created as an outcome of this process",
+                "iscorrect" : false
+            },
+            {
+                "text" : "If the bucket is empty, simply delete the bucket and create a new one with your desired name",
+                "iscorrect" : true
+            },
+            {
+                "text" : "If the old bucket has data, firstly create a new bucket with the desired name, next migrate the data from old bucket to the new one. When the data is migrated, finally delete the old bucket.",
+                "iscorrect" : true
+            }
+        ]
+    }
+]

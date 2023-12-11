@@ -1,0 +1,160 @@
+[
+        {
+            "text" : "Which of the following statements is true?",
+            "type" : "multichoice",
+            "category" : "gcp",
+            "subcategory" : "gce",
+            "dateAdded" : "2023-11",
+            "answers" : [
+                {
+                    "text" : "The default time zone of all VM Instances regardless of region is UTC",
+                    "iscorrect" : true
+                },
+                {
+                    "text" : "The default time zone of all VM Instances regardless of region is CST",
+                    "iscorrect" : false
+                },
+                {
+                    "text" : "The default time zone of your VM instances match that of the region it is running in",
+                    "iscorrect" : false
+                }
+            ]
+        },
+        {
+            "text" : "Which of the following does Compute Engine do when you specify a Linux VM startup script?",
+            "type" : "multichoice",
+            "category" : "gcp",
+            "subcategory" : "gce",
+            "dateAdded" : "2023-11",
+            "answers" : [
+                {
+                    "text" : "Copies the startup script to the VM",
+                    "iscorrect" : true
+                },
+                {
+                    "text" : "Sets run permissions on the startup script",
+                    "iscorrect" : true
+                },
+                {
+                    "text" : "Runs the startup script with the command sudo <script name>",
+                    "iscorrect" : false
+                },
+                {
+                    "text" : "Runs the startup script as the root user when the VM boots",
+                    "iscorrect" : true
+                }
+            ]
+        },
+        {
+            "text" : "Which of the following VM Metadata keys hold the location of a Linux VM startup script?",
+            "type" : "multichoice",
+            "category" : "gcp",
+            "subcategory" : "gce",
+            "dateAdded" : "2023-11",
+            "answers" : [
+                {
+                    "text" : "startup-script-local",
+                    "iscorrect" : false
+                },
+                {
+                    "text" : "startup-script",
+                    "iscorrect" : true
+                },
+                {
+                    "text" : "startup-script-url",
+                    "iscorrect" : true
+                }
+            ]
+        },
+        {
+            "text" : "Which are the following methods are valid ways to pass a startup script to a Linux VM instance?",
+            "type" : "multichoice",
+            "category" : "gcp",
+            "subcategory" : "gce",
+            "dateAdded" : "2023-11",
+            "answers" : [
+                {
+                    "text" : "Inline via the Advanced Options Automation",
+                    "iscorrect" : true
+                },
+                {
+                    "text" : "Pulled directly from GCP NFS Service",
+                    "iscorrect" : false
+                },
+                {
+                    "text" : "Passed in as a local file",
+                    "iscorrect" : true
+                },
+                {
+                    "text" : "Pulled in from a cloud storage bucket",
+                    "iscorrect" : true
+                }
+            ]
+        },
+        {
+            "text" : "A linux VM startup script can only be run at first boot, true or false?",
+            "type" : "binary",
+            "category" : "gcp",
+            "subcategory" : "gce",
+            "dateAdded" : "2023-11",
+            "answers" : [
+                {
+                    "text" : "TRUE",
+                    "iscorrect" : false
+                },
+                {
+                    "text" : "FALSE",
+                    "iscorrect" : true
+                }
+            ]
+        },
+        {
+            "text" : "Which of the following does Compute Engine do when you specify a Windows VM startup script?",
+            "type" : "multichoice",
+            "category" : "gcp",
+            "subcategory" : "gce",
+            "dateAdded" : "2023-11",
+            "answers" : [
+                {
+                    "text" : "Copies the startup script to the VM",
+                    "iscorrect" : true
+                },
+                {
+                    "text" : "Begins running when the PowerShell Service starts",
+                    "iscorrect" : false
+                },
+                {
+                    "text" : "Administrator user runs the script during startup",
+                    "iscorrect" : false
+                },
+                {
+                    "text" : "Task Scheduler runs the startup script as the LocalSystem account when the VM boots",
+                    "iscorrect" : true
+                }
+            ]
+        },{
+            "text" : "What are some of the methods used to transfer files to a Google Compute Engine Virtual Machine? ",
+            "type" : "multichoice",
+            "category" : "gcp",
+            "subcategory" : "gce",
+            "dateAdded" : "2023-11",
+            "answers" : [
+                {
+                    "text" : "Using `scp` Command: The `scp` command can be used to copy files between a local host and a remote host or between two remote hosts. Typically, the syntax would look like `scp [OPTION] [user@]host1:[file1] [user@]host2:[file2]`.",
+                    "iscorrect" : true
+                },
+                {
+                    "text" : "Using Bluetooth: Bluetooth is not a suitable method to transfer files to a Google Compute Engine Virtual Machine because Bluetooth's infrastructure doesn't support this type of file transfer to cloud-based servers.",
+                    "iscorrect" : false
+                },
+                {
+                    "text" : "Using FileZilla: FileZilla is a free software, cross-platform FTP application, consisting of FileZilla Client and FileZilla Server, can be used to transfer files to the VM.",
+                    "iscorrect" : true
+                },
+                {
+                    "text" : "Using `gsutil` Command: The `gsutil` command-line tool provides a command-line interface for Cloud Storage. You can use the command `gsutil cp` to copy files from your local machine to the VM.",
+                    "iscorrect" : true
+                }
+            ]
+        }
+ ]

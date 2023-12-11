@@ -10,12 +10,12 @@ import (
 func (h handler) GetQuestion(ctx *gin.Context) {
     id := ctx.Param("id")
 
-    var book models.Book
+    var question models.Question
 
-    if result := h.DB.First(&book, id); result.Error != nil {
+    if result := h.DB.First(&question, id); result.Error != nil {
         ctx.AbortWithError(http.StatusNotFound, result.Error)
         return
     }
 
-    ctx.JSON(http.StatusOK, &book)
+    ctx.JSON(http.StatusOK, &question)
 }

@@ -1,0 +1,74 @@
+[
+    {
+        "text" : "Compute Engine virtual machine instances, Google Kubernetes Engine (GKE) clusters, and Cloud Storage buckets are all Google Cloud resources?",
+        "type" : "binary",
+        "category" : "gcp",
+        "subcategory" : "iam",
+        "dateAdded" : "2023-11",
+        "answerSupport" : "https://cloud.google.com/iam/docs/overview",
+        "answers" : [
+            {
+                "text" : "TRUE",
+                "iscorrect" : true
+            },
+            {
+                "text" : "FALSE",
+                "iscorrect" : false
+            }
+        ]
+    },
+    {
+        "text" : "An allow policy is also known as an IAM Policy?",
+        "type" : "binary",
+        "category" : "gcp",
+        "subcategory" : "iam",
+        "dateAdded" : "2023-11",
+        "answerSupport" : "https://cloud.google.com/iam/docs/overview",
+        "answers" : [
+            {
+                "text" : "TRUE",
+                "iscorrect" : true
+            },
+            {
+                "text" : "FALSE",
+                "iscorrect" : false
+            }
+        ]
+    },
+    {
+        "text" : "Which of the following statements about IAM deny policies is true?",
+        "type" : "binary",
+        "category" : "gcp",
+        "subcategory" : "iam",
+        "dateAdded" : "2023-11",
+        "answerSupport" : "https://cloud.google.com/iam/docs/deny-overview",
+        "answers" : [
+            {
+                "text" : "A DENY policy is used to explicitly deny access to a principle regardless of the rules in the ALLOW polcy",
+                "iscorrect" : true
+            },
+            {
+                "text" : "DENY policy can have a weighting set to establish whether it should be enforced or not",
+                "iscorrect" : false
+            }
+        ]
+    },
+    {
+        "text" : "An ALLOW or IAM policy permissions will take priority over a DENY policy?",
+        "type" : "binary",
+        "category" : "gcp",
+        "subcategory" : "iam",
+        "dateAdded" : "2023-11",
+        "answerSupport" : "https://cloud.google.com/iam/docs/deny-overview",
+        "answers" : [
+            {
+                "text" : "FALSE",
+                "iscorrect" : true
+            },
+            {
+                "text" : "TRUE",
+                "iscorrect" : false
+            }
+        ]
+    }
+]

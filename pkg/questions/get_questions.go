@@ -1,4 +1,4 @@
-package books
+package questions
 
 import (
 	"net/http"
@@ -8,12 +8,12 @@ import (
 )
 
 func (h handler) GetQuestions(ctx *gin.Context) {
-    var books []models.Question
+    var questions []models.Question
 
-    if result := h.DB.Find(&books); result.Error != nil {
+    if result := h.DB.Model(&models.Question{}).Preload("Answers").Find(&questions); result.Error != nil {
         ctx.AbortWithError(http.StatusNotFound, result.Error)
         return
     }
 
-    ctx.JSON(http.StatusOK, &books)
+    ctx.JSON(http.StatusOK, &questions)
 }
