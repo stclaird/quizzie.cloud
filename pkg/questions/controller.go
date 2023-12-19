@@ -10,11 +10,19 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stclaird/quizzie.cloud/pkg/common/models"
 	"gorm.io/gorm"
 )
+
+func SortString(w string) string {
+    s := strings.Split(w, "")
+    sort.Strings(s)
+    return strings.Join(s, "")
+}
 
 type handler struct {
     DB *gorm.DB

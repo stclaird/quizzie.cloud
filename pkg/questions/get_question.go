@@ -3,9 +3,7 @@ package questions
 import (
 	"fmt"
 	"net/http"
-	"sort"
 	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stclaird/quizzie.cloud/pkg/common/models"
@@ -43,12 +41,6 @@ func (h handler) Answers(ctx *gin.Context) {
 	}
 
     ctx.JSON(http.StatusOK, response)
-}
-
-func SortString(w string) string {
-    s := strings.Split(w, "")
-    sort.Strings(s)
-    return strings.Join(s, "")
 }
 
 //compare the real answer with the user submitted answer
