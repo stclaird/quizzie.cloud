@@ -1,3 +1,6 @@
+//Package questions
+// Provide api functionailty for question objects
+
 package questions
 
 import (
@@ -25,6 +28,7 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
     questionRoutes := router.Group("/questions")
     questionRoutes.GET("/", h.GetQuestions)
     questionRoutes.GET("/:id", h.GetQuestion)
+	questionRoutes.GET("/answer/:id/:answer", h.Answers)
 
     categoryRoutes := router.Group("/categories")
     categoryRoutes.GET("/", h.GetCategories)

@@ -1,7 +1,11 @@
 package questions
 
 import (
+	"fmt"
 	"net/http"
+	"sort"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stclaird/quizzie.cloud/pkg/common/models"
@@ -18,4 +22,59 @@ func (h handler) GetQuestion(ctx *gin.Context) {
     }
 
     ctx.JSON(http.StatusOK, &question)
+}
+
+func (h handler) Answers(ctx *gin.Context) {
+    id := ctx.Param("id")
+    submittedAnswer := ctx.Param("answer")
+
+    var question models.Question
+
+    if result := h.DB.Preload("Answers").First(&question, id); result.Error != nil {
+        ctx.AbortWithError(http.StatusNotFound, result.Error)
+        return
+    }
+
+    isCorrect, CorrectAnswer := checkAnswer(question, submittedAnswer)
+
+	response := models.AnswerResponse{
+		IsCorrect : isCorrect,
+		CorrectAnswer: CorrectAnswer,
+	}
+
+    ctx.JSON(http.StatusOK, response)
+}
+
+func SortString(w string) string {
+    s := strings.Split(w, "")
+    sort.Strings(s)
+    return strings.Join(s, "")
+}
+
+//compare the real answer with the user submitted answer
+func checkAnswer(question models.Question, submittedAnswer string) (bool, []models.Answer) {
+    var answers []string // store the answers from the question so we can compare with submitted answer
+	var correctAnswersResp []models.Answer //this is sent back to the user
+
+	for _,v := range question.Answers{
+		if v.IsCorrect == true {
+			correctAnswer := models.Answer{
+                ID :  v.ID,
+                Text : v.Text,
+			}
+			correctAnswersResp = append(correctAnswersResp, correctAnswer)
+			answers = append(answers, strconv.Itoa(int(v.ID)))
+		}
+	}
+
+	submittedAnswer = SortString(submittedAnswer)
+	answersStr := SortString(submittedAnswer)
+
+	fmt.Printf("Final: %s,%s", answersStr, submittedAnswer)
+
+	if answersStr != submittedAnswer {
+		return false, correctAnswersResp
+	}
+
+	return true, correctAnswersResp
 }
