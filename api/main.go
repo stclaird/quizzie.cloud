@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/stclaird/quizzie.cloud/pkg/common/db"
 	"github.com/stclaird/quizzie.cloud/pkg/questions"
@@ -22,6 +23,8 @@ func main() {
     }
 
     router := gin.Default()
+    router.Use(static.Serve("/", static.LocalFile("./ui/build", true)))
+
     router.Use(cors.New(CORSConfig()))
 
     //init the database object

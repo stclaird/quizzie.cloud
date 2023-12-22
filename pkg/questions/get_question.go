@@ -68,8 +68,6 @@ func checkAnswer(question models.Question, submittedAnswer string) (bool, []mode
 	answersStr = strings.Join(answers,"")
 	answersStr = SortString(answersStr)
 
-	fmt.Printf("Final: answersStr: %s, submittedAnswer: %s", answersStr, submittedAnswer)
-
 	if answersStr != submittedAnswer {
 		return false, correctAnswersResp
 	}
