@@ -40,3 +40,21 @@ func (h handler) GetQuestions(ctx *gin.Context) {
 
     ctx.JSON(http.StatusOK, &questionsNoAnswers)
 }
+
+func (h handler) GetQuestionsCatSubCat(ctx *gin.Context) {
+    //get questions that match cat and subcat
+
+    catSubCat := ctx.Param("catsubcat")
+
+    cat, subcat := splitCatSubcat(catSubCat)
+
+    var questionsNoAnswers []models.QuestionNoCorrectAnswer
+
+    if result := h.DB.Model(&models.Question{}).Where("category = ? AND subcategory >= ?", cat, subcat).Find(&questionsNoAnswers); result.Error != nil {
+        ctx.AbortWithError(http.StatusNotFound, result.Error)
+        return
+    }
+
+    ctx.JSON(http.StatusOK, &questionsNoAnswers)
+
+}

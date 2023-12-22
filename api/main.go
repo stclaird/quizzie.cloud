@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/stclaird/quizzie.cloud/pkg/common/db"
 	"github.com/stclaird/quizzie.cloud/pkg/questions"
@@ -12,6 +13,7 @@ func main() {
     //get the app configuration
     config := GetConfig()
     router := gin.Default()
+    router.Use(cors.New(CORSConfig()))
 
     //init the database object
     dbHandler,err := db.Init(config.dbUrl)
