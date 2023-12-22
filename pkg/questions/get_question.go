@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stclaird/quizzie.cloud/pkg/common/models"
@@ -50,19 +51,24 @@ func checkAnswer(question models.Question, submittedAnswer string) (bool, []mode
 
 	for _,v := range question.Answers{
 		if v.IsCorrect == true {
+			fmt.Printf("Correct AnswerID %v \n", v.ID)
 			correctAnswer := models.Answer{
                 ID :  v.ID,
                 Text : v.Text,
+				IsCorrect:  true,
 			}
 			correctAnswersResp = append(correctAnswersResp, correctAnswer)
 			answers = append(answers, strconv.Itoa(int(v.ID)))
 		}
 	}
 
-	submittedAnswer = SortString(submittedAnswer)
-	answersStr := SortString(submittedAnswer)
+	submittedAnswer = SortString(submittedAnswer) //string
+	var answersStr string
 
-	fmt.Printf("Final: %s,%s", answersStr, submittedAnswer)
+	answersStr = strings.Join(answers,"")
+	answersStr = SortString(answersStr)
+
+	fmt.Printf("Final: answersStr: %s, submittedAnswer: %s", answersStr, submittedAnswer)
 
 	if answersStr != submittedAnswer {
 		return false, correctAnswersResp

@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -12,6 +13,14 @@ import (
 func main() {
     //get the app configuration
     config := GetConfig()
+
+	//remove any existing db files
+    //as we build them from scratch
+    e := os.Remove(config.dbUrl)
+    if e != nil {
+        log.Println("No existing db found")
+    }
+
     router := gin.Default()
     router.Use(cors.New(CORSConfig()))
 

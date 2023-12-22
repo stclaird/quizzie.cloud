@@ -15,16 +15,13 @@ type Question struct {
 	Type        string `json:"type"`
 	Category    string `json:"category"`
 	Subcategory string `json:"subcategory"`
-	DateAdded   string
-	Answers     []Answer
+	DateAdded   string `json:"dateAdded"`
+	Answers     []Answer `json:"answers"`
 }
 
 type Answer struct {
 	ID        uint           `gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
-	QuestionID uint
+	QuestionID uint	`gorm:"questionid"`
 	Text string `json:"text"`
 	IsCorrect bool   `json:"iscorrect"`
 }
@@ -35,7 +32,7 @@ type QuestionNoCorrectAnswer struct {
 	Type        string `json:"type"`
 	Category    string `json:"category"`
 	Subcategory string `json:"subcategory"`
-	DateAdded   string
+	DateAdded   string `json:"dateAdded"`
 	Answers     []struct {
 		ID        uint
 		Text      string `json:"text"`
@@ -43,6 +40,6 @@ type QuestionNoCorrectAnswer struct {
 }
 
 type AnswerResponse struct {
-	IsCorrect bool
-	CorrectAnswer []Answer
+	IsCorrect bool `json:"iscorrect"`
+	CorrectAnswer []Answer `json:"correctanswer"`
 }

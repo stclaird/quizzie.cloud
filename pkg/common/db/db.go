@@ -7,12 +7,15 @@ import (
 )
 
 func Init(dbPath string)  ( *gorm.DB, error) {
-	//Init the DataBase
+	//Function for Initing the DataBase
 
-	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
+		QueryFields: true,
+	})
 	if err != nil {
 		return nil, err
 	}
+
     db.AutoMigrate(&models.Question{}, &models.Answer{})
 
     return db, err

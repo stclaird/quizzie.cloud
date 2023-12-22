@@ -2,11 +2,11 @@ package models
 
 type Category struct {
 	Id string	`json:"id"`
-	CategoryName string   `json:"Category"`
-	SubCategories []Subcategory `json:"SubCategories"`
+	CategoryName string   `json:"category"`
+	SubCategories []Subcategory `json:"subcategories"`
 }
 
 type Subcategory struct {
-	SubCategoryName string `json:"SubCategoryName"`
-	URLPrefix string `json:"URLPrefix"`
+	SubCategoryName string `json:"subcategoryname"`
+	URLPrefix string `json:"urlprefix"`
 }
