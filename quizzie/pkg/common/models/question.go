@@ -11,7 +11,7 @@ type Question struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Text        string `json:"text"`
+	Text        string `json:"questionText"`
 	Type        string `json:"type"`
 	Category    string `json:"category"`
 	Subcategory string `json:"subcategory"`
@@ -28,7 +28,7 @@ type Answer struct {
 
 type QuestionNoCorrectAnswer struct {
 	ID          uint
-	Text        string `json:"text"`
+	Text        string `json:"questionText"`
 	Type        string `json:"type"`
 	Category    string `json:"category"`
 	Subcategory string `json:"subcategory"`

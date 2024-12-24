@@ -1,6 +1,6 @@
 [
     {
-        "text" : "Compute Engine virtual machine instances, Google Kubernetes Engine (GKE) clusters, and Cloud Storage buckets are all Google Cloud resources?",
+        "questionText" : "Compute Engine virtual machine instances, Google Kubernetes Engine (GKE) clusters, and Cloud Storage buckets are all Google Cloud resources?",
         "type" : "binary",
         "category" : "gcp",
         "subcategory" : "iam",
@@ -18,7 +18,7 @@
         ]
     },
     {
-        "text" : "An allow policy is also known as an IAM Policy?",
+        "questionText" : "An allow policy is also known as an IAM Policy?",
         "type" : "binary",
         "category" : "gcp",
         "subcategory" : "iam",
@@ -36,7 +36,7 @@
         ]
     },
     {
-        "text" : "Which of the following statements about IAM deny policies is true?",
+        "questionText" : "Which of the following statements about IAM deny policies is true?",
         "type" : "binary",
         "category" : "gcp",
         "subcategory" : "iam",
@@ -54,7 +54,7 @@
         ]
     },
     {
-        "text" : "An ALLOW or IAM policy permissions will take priority over a DENY policy?",
+        "questionText" : "An ALLOW or IAM policy permissions will take priority over a DENY policy?",
         "type" : "binary",
         "category" : "gcp",
         "subcategory" : "iam",

@@ -23,7 +23,7 @@ func main() {
     }
 
     router := gin.Default()
-    router.Use(static.Serve("/", static.LocalFile("./ui/build", true)))
+    router.Use(static.Serve("/", static.LocalFile("../ui/build", true)))
 
     router.Use(cors.New(CORSConfig()))
 

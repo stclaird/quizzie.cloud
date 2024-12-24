@@ -1,6 +1,6 @@
 [
         {
-            "text" : "Which of the following statements is true?",
+            "questionText" : "Which of the following statements is true?",
             "type" : "multichoice",
             "category" : "gcp",
             "subcategory" : "gce",
@@ -21,7 +21,7 @@
             ]
         },
         {
-            "text" : "Which of the following does Compute Engine do when you specify a Linux VM startup script?",
+            "questionText" : "Which of the following does Compute Engine do when you specify a Linux VM startup script?",
             "type" : "multichoice",
             "category" : "gcp",
             "subcategory" : "gce",
@@ -46,7 +46,7 @@
             ]
         },
         {
-            "text" : "Which of the following VM Metadata keys hold the location of a Linux VM startup script?",
+            "questionText" : "Which of the following VM Metadata keys hold the location of a Linux VM startup script?",
             "type" : "multichoice",
             "category" : "gcp",
             "subcategory" : "gce",
@@ -67,7 +67,7 @@
             ]
         },
         {
-            "text" : "Which are the following methods are valid ways to pass a startup script to a Linux VM instance?",
+            "questionText" : "Which are the following methods are valid ways to pass a startup script to a Linux VM instance?",
             "type" : "multichoice",
             "category" : "gcp",
             "subcategory" : "gce",
@@ -109,7 +109,7 @@
             ]
         },
         {
-            "text" : "Which of the following does Compute Engine do when you specify a Windows VM startup script?",
+            "questionText" : "Which of the following does Compute Engine do when you specify a Windows VM startup script?",
             "type" : "multichoice",
             "category" : "gcp",
             "subcategory" : "gce",
@@ -133,7 +133,7 @@
                 }
             ]
         },{
-            "text" : "What are some of the methods used to transfer files to a Google Compute Engine Virtual Machine? ",
+            "questionText" : "What are some of the methods used to transfer files to a Google Compute Engine Virtual Machine? ",
             "type" : "multichoice",
             "category" : "gcp",
             "subcategory" : "gce",

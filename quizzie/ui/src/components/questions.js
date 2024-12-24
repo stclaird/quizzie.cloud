@@ -109,7 +109,7 @@ export default function Questions(props) {
     const displayQuestion = QuestionList.map((question,idx) =>
     <div>
     <div className="question">
-        <p>{question.text}</p>
+        <p>{question.questionText}</p>
         <hr ></hr>
         {question.answers.map((answer,idx) =>
         <div>

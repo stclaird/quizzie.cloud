@@ -1,6 +1,6 @@
 [
     {
-        "text" : "When you need Layer 7 HTTP/HTTPS Loadbalancing you would choose Cloud Application Loadbalancer?",
+        "questionText" : "When you need Layer 7 HTTP/HTTPS Loadbalancing you would choose Cloud Application Loadbalancer?",
         "type" : "binary",
         "category" : "gcp",
         "subcategory" : "gce",
@@ -17,7 +17,7 @@
         ]
     },
     {
-        "text" : "Which of the following are examples of GCP Cloud Load balancers?",
+        "questionText" : "Which of the following are examples of GCP Cloud Load balancers?",
         "type" : "multichoice",
         "category" : "gcp",
         "subcategory" : "gce",
@@ -38,4 +38,3 @@
         ]
     }
 ]
-

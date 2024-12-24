@@ -1,6 +1,6 @@
 [
     {
-        "text" : "What is the purpose of the Visibility Timeout?",
+        "questionText" : "What is the purpose of the Visibility Timeout?",
         "type" : "multichoice",
         "category" : "aws",
         "subcategory" : "sqs",
@@ -18,7 +18,7 @@
         ]
     },
     {
-        "text" : "What is the maximum message visibility?",
+        "questionText" : "What is the maximum message visibility?",
         "type" : "multichoice",
         "category" : "aws",
         "subcategory" : "sqs",
@@ -40,7 +40,7 @@
         ]
     },
     {
-        "text" : "What is the default message retention period?",
+        "questionText" : "What is the default message retention period?",
         "type" : "multichoice",
         "category" : "aws",
         "subcategory" : "sqs",
@@ -66,7 +66,7 @@
         ]
     },
     {
-        "text" : "What is the maximum size of an SQS queue name?",
+        "questionText" : "What is the maximum size of an SQS queue name?",
         "type" : "multichoice",
         "category" : "aws",
         "subcategory" : "sqs",
@@ -92,7 +92,7 @@
         ]
     },
     {
-        "text" : "What is the minimum size of an SQS message?",
+        "questionText" : "What is the minimum size of an SQS message?",
         "type" : "multichoice",
         "category" : "aws",
         "subcategory" : "sqs",
@@ -114,7 +114,7 @@
         ]
     },
     {
-        "text" : "What is the maximum size of an SQS message?",
+        "questionText" : "What is the maximum size of an SQS message?",
         "type" : "multichoice",
         "category" : "aws",
         "subcategory" : "sqs",
@@ -139,7 +139,7 @@
             }
         ]
     },{
-        "text" : "What is the minimum message retention period?",
+        "questionText" : "What is the minimum message retention period?",
         "type" : "multichoice",
         "category" : "aws",
         "subcategory" : "sqs",
@@ -165,7 +165,7 @@
         ]
     },
     {
-        "text" : "What is the maximum message retention period?",
+        "questionText" : "What is the maximum message retention period?",
         "type" : "multichoice",
         "category" : "aws",
         "subcategory" : "sqs",
@@ -190,7 +190,7 @@
             }
         ]
     },{
-        "text" : "What is the definition of an In Flight message?",
+        "questionText" : "What is the definition of an In Flight message?",
         "type" : "multichoice",
         "category" : "aws",
         "subcategory" : "sqs",
@@ -208,7 +208,7 @@
         ]
     },
     {
-        "text" : "What is the maximum number of messages on a queue that may be in the status of in-flight?",
+        "questionText" : "What is the maximum number of messages on a queue that may be in the status of in-flight?",
         "type" : "multichoice",
         "category" : "aws",
         "subcategory" : "sqs",

@@ -1,6 +1,6 @@
 [
     {
-        "text" : "What is the best description of the GCP resource structure?",
+        "questionText" : "What is the best description of the GCP resource structure?",
         "type" : "multichoice",
         "category" : "gcp",
         "subcategory" : "projects",
@@ -19,7 +19,7 @@
         ]
     },
     {
-        "text" : "Which of the following statements about Google Cloud resources?",
+        "questionText" : "Which of the following statements about Google Cloud resources?",
         "type" : "binary",
         "category" : "gcp",
         "subcategory" : "projects",

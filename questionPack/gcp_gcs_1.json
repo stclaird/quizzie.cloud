@@ -1,6 +1,6 @@
 [
     {
-        "text" : "What is the maximum amount of the buckets per project?",
+        "questionText" : "What is the maximum amount of the buckets per project?",
         "type" : "multichoice",
         "category" : "gcp",
         "subcategory" : "gcs",
@@ -17,7 +17,7 @@
         ]
     },
     {
-        "text" : "Which of the following statements is true?",
+        "questionText" : "Which of the following statements is true?",
         "type" : "binary",
         "category" : "gcp",
         "subcategory" : "gcs",
@@ -34,7 +34,7 @@
         ]
     },
     {
-        "text" : "Which of the following describes the process of renaming a GCS bucket?",
+        "questionText" : "Which of the following describes the process of renaming a GCS bucket?",
         "type" : "multichoice",
         "category" : "gcp",
         "subcategory" : "gcs",

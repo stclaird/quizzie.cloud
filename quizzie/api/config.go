@@ -40,7 +40,7 @@ func GetConfig() Config {
     if questionPath == nil {
         questionPathString = "../questionPack"
     } else {
-        questionPathString = dbUrl.(string)
+        questionPathString = questionPath.(string)
     }
 
 	return Config{
