@@ -1,0 +1,13 @@
+{
+    "question":"",
+    "answerReference":"",
+    "answers":[
+        {
+        "text":"",
+        "iscorrect":true},
+        {
+        "text":"",
+        "iscorrect":false
+        }
+    ]
+}

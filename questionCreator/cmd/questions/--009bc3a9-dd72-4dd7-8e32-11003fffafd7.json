@@ -1,0 +1,1 @@
+{"question":"Which type of database is etcd?","type":"","category":"","subcategory":"","dateadded":"","certification":"","answerReference":"B","answers":[{"text":"Key-value store.","iscorrect":true},{"text":"Relational database.","iscorrect":false},{"text":"Graph database.","iscorrect":false}]}

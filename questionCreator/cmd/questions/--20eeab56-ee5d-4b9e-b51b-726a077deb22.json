@@ -1,0 +1,1 @@
+{"question":"What communication protocol does etcd use?","type":"","category":"","subcategory":"","dateadded":"","certification":"","answerReference":"F","answers":[{"text":"gRPC.","iscorrect":true},{"text":"HTTP.","iscorrect":false},{"text":"TCP.","iscorrect":false}]}

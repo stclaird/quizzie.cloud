@@ -1,0 +1,1 @@
+{"question":"What is a key feature of etcd's data model?","type":"","category":"","subcategory":"","dateadded":"","certification":"","answerReference":"I","answers":[{"text":"Hierarchical key-value pairs.","iscorrect":true},{"text":"Relational tables with rows and columns.","iscorrect":false},{"text":"A graph-based structure with nodes and edges.","iscorrect":false}]}
