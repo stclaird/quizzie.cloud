@@ -1,3 +1,8 @@
 {
-    "question":"aws ec2 instance types"
+    "question": "kubernetes etcd",
+    "numincorrectans" : 1,
+    "numcorrectans" : 2,
+    "numquestions" : 10,
+    "category" : "kubernetes",
+    "subcategory" : "etc"
 }

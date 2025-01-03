@@ -7,6 +7,7 @@ import (
 
 type Config struct{
 	Port string
+	Questionsdir string
 }
 
 func LoadConfig(path string) (config Config, err error) {

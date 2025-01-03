@@ -1,14 +1,16 @@
 package models
 
 type QuestionIn struct {
-	QuestionText        string `json:"question" form:"text" binding:"required"`
+	QuestionText        string `json:"questionText" form:"text" binding:"required"`
 	NumInCorrectAns int `json:"numincorrectans" form:"int"`
 	NumCorrectAns int `json:"numcorrectans" form:"int"`
 	NumQuestions int `json:"numquestions" form:"int"`
+	Category    string `json:"category" form:"category"`
+	Subcategory string `json:"subcategory" form:"subcategory"`
 }
 
 type QuestionOut struct {
-	QuestionText        string `json:"question" form:"text" binding:"required"`
+	QuestionText        string `json:"questionText" form:"text" binding:"required"`
 	Type        string `json:"type" form:"type"`
 	Category    string `json:"category" form:"category"`
 	Subcategory string `json:"subcategory" form:"subcategory"`

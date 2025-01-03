@@ -5,34 +5,27 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
-
-	"github.com/stclaird/quizzie.cloud/questionCreator/pkg/models"
 )
 
-func SortString(w string) string {
-    s := strings.Split(w, "")
-    sort.Strings(s)
-    return strings.Join(s, "")
-}
-
-func generateQuestionFileName(q models.QuestionOut) (name string ){
+func generateQuestionFileName(cat string, subcat string) (name string ){
     //Generate File name for Question
-    slug := generateQuestionID(q)
+    slug := generateQuestionID()
 
-    cat := strings.ToLower(q.Category)
-    catsafe := safeFileName(cat)
+    catlower := strings.ToLower(cat)
+    catsafe := safeFileName(catlower)
 
-    subcat := strings.ToLower(q.Subcategory)
-    subcatsafe := safeFileName(subcat)
+    subcatlower := strings.ToLower(subcat)
+    subcatsafe := safeFileName(subcatlower)
 
     name = fmt.Sprintf("%s-%s-%s.json", catsafe, subcatsafe, slug )
 
     return name
 }
 
-func generateQuestionID(q models.QuestionOut) string {
+func generateQuestionID() string {
     se := uuid.New().String()
     fmt.Println(se)
     return se
@@ -44,4 +37,23 @@ func safeFileName(s string) string {
     cleanString := re.ReplaceAllString(s, "")
 
     return cleanString
+}
+
+func sortString(w string) string {
+    s := strings.Split(w, "")
+    sort.Strings(s)
+    return strings.Join(s, "")
+}
+
+func splitString(w string) []string {
+    s := strings.Split(w, " ")
+    return s
+}
+
+func createDate() string {
+    //Return date in format 30-April-2018
+    currentTime := time.Now()
+    dateOut := fmt.Sprintf("%v-%v-%v", currentTime.Day(), currentTime.Month(), currentTime.Year())
+
+    return dateOut
 }

@@ -3,7 +3,7 @@ package questions
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -51,7 +51,6 @@ func removeCorrectAnswerfield(questions []models.Question) (questionsNoAnswers [
      return questionsNoAnswers
 }
 
-
 func InitQuestions(questionPack string, db *gorm.DB) (allQuestions []models.Question) {
 	//import questions from a json file ready for adding to the DB
 	//returns a slice of question stuct types
@@ -60,7 +59,7 @@ func InitQuestions(questionPack string, db *gorm.DB) (allQuestions []models.Ques
         DB: db,
     }
 
-	files, err := ioutil.ReadDir(questionPack)
+	files, err := os.ReadDir(questionPack)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,12 +75,14 @@ func InitQuestions(questionPack string, db *gorm.DB) (allQuestions []models.Ques
 				log.Println("Error", err)
 			}
 			defer jsonFile.Close()
-			byteValue, _ := ioutil.ReadAll(jsonFile)
+			byteValue, _ := io.ReadAll(jsonFile)
 			json.Unmarshal(byteValue, &questionsObj)
 			for _, question := range questionsObj {
 				allQuestions = append(allQuestions, question)
                 h.CreateQuestion(question)
 			}
+			fmt.Printf("Loaded %v of Questions from %s\n", len(questionsObj), File.Name())
+
 		}
 	}
 

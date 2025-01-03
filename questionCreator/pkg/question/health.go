@@ -7,7 +7,7 @@ import (
 )
 
 func Health(ctx *gin.Context) {
-
+	//Return Health Status Response
 	response := gin.H{
 		"status" : "ok",
 	}

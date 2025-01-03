@@ -11,12 +11,19 @@ import (
 	"github.com/stclaird/quizzie.cloud/questionCreator/pkg/util"
 )
 
+func Configs(config util.Config) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        c.Set("config", config)
+    }
+}
+
 func main() {
     //get the app configuration
     config,err := util.LoadConfig(".")
 	if err != nil {
 		log.Fatal("cannot load config")
 	}
+
     router := gin.Default()
 
 	router.GET("/health", func(c *gin.Context) {
@@ -26,6 +33,7 @@ func main() {
 	  })
 
     router.Use(cors.New(util.CORSConfig()))
-    question.RegisterRoutes(router)
+	router.Use(Configs(config))
+    question.RegisterRoutes(router, config)
     router.Run(config.Port)
 }
