@@ -12,30 +12,30 @@ import (
 )
 
 func main() {
-    //get the app configuration
-    config := GetConfig()
+	//get the app configuration
+	config := GetConfig()
 
 	//remove any existing db files
-    //as we build them from scratch
-    e := os.Remove(config.dbUrl)
-    if e != nil {
-        log.Println("No existing db found")
-    }
+	//as we build them from scratch
+	e := os.Remove(config.dbUrl)
+	if e != nil {
+		log.Println("No existing db found")
+	}
 
-    router := gin.Default()
-    router.Use(static.Serve("/", static.LocalFile("../ui/build", true)))
+	router := gin.Default()
+	router.Use(static.Serve("/", static.LocalFile("../ui/build", true)))
 
-    router.Use(cors.New(CORSConfig()))
+	router.Use(cors.New(CORSConfig()))
 
-    //init the database object
-    dbHandler,err := db.Init(config.dbUrl)
+	//init the database object
+	dbHandler, err := db.Init(config.dbUrl)
 	if err != nil {
 		log.Printf("main %s", err)
 	}
 
-    //init the questions
-    questions.InitQuestions(config.questionPath, dbHandler)
-    questions.RegisterRoutes(router, dbHandler)
+	//init the questions
+	questions.InitQuestions(config.questionPath, dbHandler)
+	questions.RegisterRoutes(router, dbHandler)
 
-    router.Run(config.port)
+	router.Run(config.port)
 }

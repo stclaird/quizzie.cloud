@@ -9,20 +9,20 @@ import (
 )
 
 type handler struct {
-    DB *gorm.DB
+	DB *gorm.DB
 }
 
 func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
-    h := &handler{
-        DB: db,
-    }
+	h := &handler{
+		DB: db,
+	}
 
-    questionRoutes := router.Group("/questions")
-    questionRoutes.GET("/", h.GetQuestions)
+	questionRoutes := router.Group("/questions")
+	questionRoutes.GET("/", h.GetQuestions)
 	questionRoutes.GET("/catsubcat/:catsubcat", h.GetQuestionsCatSubCat)
-    questionRoutes.GET("/id/:id", h.GetQuestion)
+	questionRoutes.GET("/id/:id", h.GetQuestion)
 	questionRoutes.GET("/answer/:id/:answer", h.Answers)
 
-    categoryRoutes := router.Group("/categories")
-    categoryRoutes.GET("/", h.GetCategories)
+	categoryRoutes := router.Group("/categories")
+	categoryRoutes.GET("/", h.GetCategories)
 }

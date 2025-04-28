@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func Init(dbPath string)  ( *gorm.DB, error) {
+func Init(dbPath string) (*gorm.DB, error) {
 	//Function for Initing the DataBase
 
 	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
@@ -16,7 +16,7 @@ func Init(dbPath string)  ( *gorm.DB, error) {
 		return nil, err
 	}
 
-    db.AutoMigrate(&models.Question{}, &models.Answer{})
+	db.AutoMigrate(&models.Question{}, &models.Answer{})
 
-    return db, err
+	return db, err
 }

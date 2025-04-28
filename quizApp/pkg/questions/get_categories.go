@@ -14,7 +14,7 @@ func (h handler) GetCategories(ctx *gin.Context) {
 	var questions []models.Question
 
 	err := h.DB.Model(&models.Question{}).Preload("Answers").Find(&questions).Error
-    if err != nil {
+	if err != nil {
 		fmt.Printf("error %s", err)
 	}
 
@@ -26,7 +26,7 @@ func (h handler) GetCategories(ctx *gin.Context) {
 		var category models.Category
 		category.Id = strconv.Itoa(k)
 		category.CategoryName = v.Category
-		Categories[ v.Category] = &category
+		Categories[v.Category] = &category
 
 		var subCategory models.Subcategory
 		subCategory.SubCategoryName = v.Subcategory
@@ -35,7 +35,7 @@ func (h handler) GetCategories(ctx *gin.Context) {
 	}
 
 	//Apply all subcategories to appropriate category
-	for _,v := range subCategories {
+	for _, v := range subCategories {
 		splt := strings.Split(v.URLPrefix, "-")
 		cat := splt[0]
 		for _, value := range Categories {
@@ -46,7 +46,7 @@ func (h handler) GetCategories(ctx *gin.Context) {
 	}
 
 	var response []*models.Category
-	for _,v := range Categories {
+	for _, v := range Categories {
 		response = append(response, v)
 	}
 
