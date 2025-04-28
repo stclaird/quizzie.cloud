@@ -8,6 +8,7 @@ import (
 type Config struct{
 	Port string
 	Questionsdir string
+	Geminimodel string
 }
 
 func LoadConfig(path string) (config Config, err error) {
