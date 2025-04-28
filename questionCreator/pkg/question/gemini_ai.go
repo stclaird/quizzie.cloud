@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/generative-ai-go/genai"
 	"github.com/stclaird/quizzie.cloud/questionCreator/pkg/models"
+	"github.com/stclaird/quizzie.cloud/questionCreator/pkg/util"
 	"google.golang.org/api/option"
 )
 
@@ -38,7 +39,7 @@ func createPrompt(questionIn models.QuestionIn) string {
     }
 
     promptPrefix := fmt.Sprintf("Ask me %v questions regarding", questionIn.NumQuestions)
-    promptAnswers := fmt.Sprintf("give me %v correct answers and %v incorrect answers using this JSON schema:", questionIn.NumCorrectAns, questionIn.NumInCorrectAns)
+    promptAnswers := fmt.Sprintf("give me %v correct answers and %v incorrect answers using this JSON schema:", numCorrectAns,numInCorrectAns)
     promptJson := fmt.Sprintf("Questions = {'questionText': string, 'answerReference': string, 'answers':[ %s ]}", answersStr)
     promptSuffix := "Return: <Question>"
 
@@ -48,6 +49,11 @@ func createPrompt(questionIn models.QuestionIn) string {
 }
 
 func askAi (questionIn models.QuestionIn) models.Questions {
+	config,err := util.LoadConfig(".")
+	if err != nil {
+		log.Fatal("cannot load config")
+	}
+
 	//Sent prompt to AI API
 	ctx := context.Background()
 	// Access your API key as an environment variable (see "Set up your API key" above)
@@ -55,7 +61,7 @@ func askAi (questionIn models.QuestionIn) models.Questions {
 	if err != nil {
 		log.Fatal(err)
 	}
-	model := client.GenerativeModel("gemini-1.5-pro-latest")
+	model := client.GenerativeModel(config.Geminimodel)
 	// Ask the model to respond with JSON.
 	model.ResponseMIMEType = "application/json"
 	prompt :=  createPrompt(questionIn)

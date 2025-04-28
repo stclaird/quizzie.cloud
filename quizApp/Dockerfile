@@ -16,7 +16,6 @@ COPY go.sum /project/go.sum
 COPY pkg /project/pkg
 
 COPY /api/ /project/api
-COPY /questionPack /project/questionPack
 
 WORKDIR /project/api
 RUN CGO_CFLAGS="-D_LARGEFILE64_SOURCE" go build -a -ldflags "-linkmode external -extldflags '-static' -s -w" -o api .
@@ -27,7 +26,5 @@ RUN apk --no-cache add ca-certificates
 
 WORKDIR /project/api
 COPY --from=builder /project/api/ /project/api/
-COPY --from=builder /project/questionPack/ /project/questionPack/
-
 
 ENTRYPOINT ["/project/api/api"]
