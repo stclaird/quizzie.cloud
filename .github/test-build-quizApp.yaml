@@ -1,0 +1,33 @@
+name: Test and Build QuizApp
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'quizApp/**'
+      - 'api/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'quizApp/**'
+      - 'api/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21'
+
+    - name: Run go fmt
+      run: go fmt ./...
+
+    - name: Run go test
+      run: go test ./...
