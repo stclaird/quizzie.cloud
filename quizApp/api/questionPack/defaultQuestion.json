@@ -2,8 +2,8 @@
        {
         "questionText" : "In the bond movie 'Goldfinger', what was the name of the villain's henchman who had a metal hand?",
         "type" : "multichoice",
-        "category" : "movies and tv",
-        "subcategory" : "james bond",
+        "category" : "Movies And Television",
+        "subcategory" : "James Bond",
         "dateAdded" : "2025-11",
         "certification" : "N/A",
         "answerSupport" : "N/A",
@@ -15,6 +15,25 @@
             {
                 "text" : "nicknack",
                 "iscorrect" : false
+            }
+        ]
+    },
+    {
+        "questionText" : "Which actress played the part of Plenty O'Tool in the film Diamonds Are Forever?",
+        "type" : "multichoice",
+        "category" : "Movies And Television",
+        "subcategory" : "James Bond",
+        "dateAdded" : "2025-11",
+        "certification" : "N/A",
+        "answerSupport" : "N/A",
+        "answers" : [
+            {
+                "text" : "Honour Blackman",
+                "iscorrect" : false
+            },
+            {
+                "text" : "Lana Wood",
+                "iscorrect" : true
             }
         ]
     },
