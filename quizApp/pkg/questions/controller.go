@@ -17,10 +17,16 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 		DB: db,
 	}
 
+	//Question route group.
 	questionRoutes := router.Group("/questions")
+
+	//Question routes.
 	questionRoutes.GET("/", h.GetQuestions)
-	questionRoutes.GET("/catsubcat/:catsubcat", h.GetQuestionsCatSubCat)
+	//Get questions by category and subcategory
+	questionRoutes.GET("/:category/:subcategory", h.GetQuestionsByCategoryAndSubcategory)
+	//Get question by id
 	questionRoutes.GET("/id/:id", h.GetQuestion)
+	//Submit an answer to a question
 	questionRoutes.GET("/answer/:id/:answer", h.Answers)
 
 	categoryRoutes := router.Group("/categories")

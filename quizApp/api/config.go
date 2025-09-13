@@ -38,7 +38,7 @@ func GetConfig() Config {
 	var questionPathString string
 
 	if questionPath == nil {
-		questionPathString = "../questionPack"
+		questionPathString = "./questionPack"
 	} else {
 		questionPathString = questionPath.(string)
 	}

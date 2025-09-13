@@ -5,7 +5,7 @@ build:
 	go build -o api ./api/.
 
 builddocker:
-	docker build -t quizzie .
+	docker build -t quizzie.cloud .
 
 buildui:
 	cd ui/ && yarn build

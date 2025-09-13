@@ -11,7 +11,7 @@ export default function Questions(props) {
     const [PostResponse, setPostResponse ] = useState([]);
     const [AnswerResp, setAnswerResp] = useState([])
 
-    let questionUrl =  "http://localhost:5000/questions/catsubcat/" + props.urlprefix
+    let questionUrl =  `http://localhost:5000/questions/${props.catName}/${props.subCatName}`
     let answerURL = "http://localhost:5000/questions/answer/"
 
     //Next Question
@@ -145,7 +145,7 @@ export default function Questions(props) {
     return (
     <div>
       <div className='row page-header'>
-        <div className='col-md'> <h2 id="list-heading"><a className="parentCat" href='/'>{props.name} &#92;</a> {props.subCatName}</h2></div>
+        <div className='col-md'> <h2 id="list-heading"><a className="parentCat" href='/'>{props.catName} &#92;</a> {props.subCatName}</h2></div>
         <div className='col-md'><p>Question: {QuestionIdx + 1} of {NumQuestions}</p></div>
       </div>
 

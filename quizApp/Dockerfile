@@ -27,4 +27,6 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /project/api
 COPY --from=builder /project/api/ /project/api/
 
+EXPOSE 5000
+
 ENTRYPOINT ["/project/api/api"]

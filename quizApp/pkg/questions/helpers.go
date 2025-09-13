@@ -77,9 +77,12 @@ func InitQuestions(questionPack string, db *gorm.DB) (allQuestions []models.Ques
 			defer jsonFile.Close()
 			byteValue, _ := io.ReadAll(jsonFile)
 			json.Unmarshal(byteValue, &questionsObj)
-			for _, question := range questionsObj {
-				allQuestions = append(allQuestions, question)
-				h.CreateQuestion(question)
+			for i, question := range questionsObj {
+				questionsObj[i].Category = strings.Replace(question.Category, "-", " ", -1)
+				fmt.Printf("Adding Question Category: %s\n", question.Category)
+
+				allQuestions = append(allQuestions, questionsObj[i])
+				h.CreateQuestion(questionsObj[i])
 			}
 			fmt.Printf("Loaded %v of Questions from %s\n", len(questionsObj), File.Name())
 

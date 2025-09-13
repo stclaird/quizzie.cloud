@@ -15,7 +15,7 @@ function App(props) {
   const [questions, setQuestions] = useState("")
 
   //Show Questions
-  function startQuestions(name, subCatName, urlprefix) {
+  function startQuestions(catName, subCatName) {
     //Don't show categories when in question mode.
     setShowCategories(false)
     //display questions to true
@@ -23,9 +23,8 @@ function App(props) {
 
     //Launch the questions
     setQuestions({
-      name : name,
+      catName : catName,
       subCatName : subCatName,
-      urlprefix : urlprefix,
       initialQuestionIdx : 0
    })
   }
@@ -40,9 +39,8 @@ function App(props) {
             categoriesUrl={categoriesUrl}
       /> }
       {showQuestions && <Questions
-            name={questions.name}
+            catName={questions.catName}
             subCatName={questions.subCatName}
-            urlprefix={questions.urlprefix}
             initialQuestionIdx={0}
       />}
   </div>
