@@ -17,7 +17,7 @@ func (h handler) GetCategories(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
-    fmt.Printf("questions: %v\n", questions)
+	fmt.Printf("questions: %v\n", questions)
 	//
 	//Use maps to ensure unique categories and subcategories
 	//

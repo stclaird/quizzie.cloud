@@ -22,15 +22,15 @@ func (h handler) GetQuestions(ctx *gin.Context) {
 }
 
 func (h handler) GetQuestionsByCategoryAndSubcategory(ctx *gin.Context) {
-    category := ctx.Param("category")
-    subcategory := ctx.Param("subcategory")
+	category := ctx.Param("category")
+	subcategory := ctx.Param("subcategory")
 
-    var questions []models.Question
-    if err := h.DB.Where("category = ? AND subcategory = ?", category, subcategory).Preload("Answers").Find(&questions).Error; err != nil {
-        ctx.AbortWithError(http.StatusNotFound, err)
-        return
-    }
+	var questions []models.Question
+	if err := h.DB.Where("category = ? AND subcategory = ?", category, subcategory).Preload("Answers").Find(&questions).Error; err != nil {
+		ctx.AbortWithError(http.StatusNotFound, err)
+		return
+	}
 
-    questionsNoAnswers := removeCorrectAnswerfield(questions)
-    ctx.JSON(http.StatusOK, &questionsNoAnswers)
+	questionsNoAnswers := removeCorrectAnswerfield(questions)
+	ctx.JSON(http.StatusOK, &questionsNoAnswers)
 }
