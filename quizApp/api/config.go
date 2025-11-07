@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gin-contrib/cors"
 	"github.com/spf13/viper"
 )
@@ -36,6 +38,7 @@ func GetConfig() Config {
 
 	questionPath := viper.Get("QUESTION_PATH")
 	var questionPathString string
+	fmt.Println("questionPath:", questionPath)
 
 	if questionPath == nil {
 		questionPathString = "./questionPack"
