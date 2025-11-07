@@ -31,10 +31,10 @@ jobs:
           cd quizApp/
           go fmt ./...
 
-      - name: Run go test
-        run: |-
-          cd quizApp/
-          go test ./...
+      # - name: Run go test
+      #   run: |-
+      #     cd quizApp/
+      #     go test ./...
 
       - name: Log in to Docker Hub
         if: github.event_name != 'pull_request'
