@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gin-contrib/cors"
 	"github.com/spf13/viper"
@@ -14,48 +15,45 @@ type Config struct {
 }
 
 func GetConfig() Config {
-
+	// Set up viper to read from multiple sources
 	viper.SetConfigFile(".env")
 	viper.ReadInConfig()
 
-	port := viper.Get("PORT")
-	var portString string
+	// Enable reading from environment variables
+	viper.AutomaticEnv()
 
-	if port == nil {
-		portString = ":5000"
-	} else {
-		portString = port.(string)
+	// Set defaults
+	viper.SetDefault("PORT", ":8080")
+	viper.SetDefault("DB_URL", "quizzie.sqlite.db")
+	viper.SetDefault("QUESTION_PATH", "./questionPack")
+
+	// Get values (env vars will override .env file values, which override defaults)
+	port := viper.GetString("PORT")
+	dbUrl := viper.GetString("DB_URL")
+	questionPath := viper.GetString("QUESTION_PATH")
+
+	// Ensure port has colon prefix
+	if !strings.HasPrefix(port, ":") {
+		port = ":" + port
 	}
 
-	dbUrl := viper.Get("DB_URL")
-	var dbUrlString string
-
-	if dbUrl == nil {
-		dbUrlString = "quizzie.sqlite.db"
-	} else {
-		dbUrlString = dbUrl.(string)
-	}
-
-	questionPath := viper.Get("QUESTION_PATH")
-	var questionPathString string
 	fmt.Println("questionPath:", questionPath)
-
-	if questionPath == nil {
-		questionPathString = "./questionPack"
-	} else {
-		questionPathString = questionPath.(string)
-	}
+	fmt.Println("port:", port)
 
 	return Config{
-		port:         portString,
-		dbUrl:        dbUrlString,
-		questionPath: questionPathString,
+		port:         port,
+		dbUrl:        dbUrl,
+		questionPath: questionPath,
 	}
 }
 
-func CORSConfig() cors.Config {
+func CORSConfig(config Config) cors.Config {
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"http://localhost:5000"}
+
+	// Use the port from config to build the allowed origin
+	allowedOrigin := "http://localhost" + config.port
+	corsConfig.AllowOrigins = []string{allowedOrigin}
+
 	corsConfig.AllowCredentials = true
 	corsConfig.AddAllowHeaders("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers", "Content-Type", "X-XSRF-TOKEN", "Accept", "Origin", "X-Requested-With", "Authorization")
 	corsConfig.AddAllowMethods("GET", "POST", "PUT", "DELETE")

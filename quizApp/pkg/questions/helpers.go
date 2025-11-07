@@ -54,11 +54,39 @@ func InitQuestions(questionPack string, db *gorm.DB) (allQuestions []models.Ques
 
 	// Check if questionPack is a URL
 	if strings.HasPrefix(questionPack, "http://") || strings.HasPrefix(questionPack, "https://") {
-		// Handle HTTP URL
-		allQuestions = loadQuestionsFromURL(questionPack, h)
+		// Handle HTTP URL with fallback
+		allQuestions = loadQuestionsFromURLWithFallback(questionPack, h)
 	} else {
-		// Handle local directory
-		allQuestions = loadQuestionsFromLocal(questionPack, h)
+		// Handle local directory with fallback
+		allQuestions = loadQuestionsFromLocalWithFallback(questionPack, h)
+	}
+
+	// Final fallback if no questions loaded at all
+	if len(allQuestions) == 0 {
+		log.Println("No questions loaded from any source, using emergency fallback")
+		allQuestions = loadEmergencyFallback(h)
+	}
+
+	return allQuestions
+}
+
+func loadQuestionsFromLocalWithFallback(questionPack string, h *handler) []models.Question {
+	// Try the specified local path first
+	allQuestions := loadQuestionsFromLocal(questionPack, h)
+
+	// If that failed and it's not already the default path, try the default
+	if len(allQuestions) == 0 && questionPack != "./questionPack" {
+		log.Printf("Failed to load from %s, trying ./questionPack", questionPack)
+		allQuestions = loadQuestionsFromLocal("./questionPack", h)
+	}
+
+	// If still no questions, try the specific defaultQuestion.json file
+	if len(allQuestions) == 0 {
+		log.Println("Failed to load from directory, trying defaultQuestion.json")
+		questions := processJSONFile("./questionPack/defaultQuestion.json", h, false)
+		if questions != nil {
+			allQuestions = append(allQuestions, questions...)
+		}
 	}
 
 	return allQuestions
@@ -69,13 +97,33 @@ func loadQuestionsFromLocal(questionPack string, h *handler) []models.Question {
 
 	files, err := os.ReadDir(questionPack)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("Error reading directory %s: %v", questionPack, err)
+		return allQuestions // Return empty slice instead of crashing
 	}
 
 	for _, file := range files {
 		if filepath.Ext(file.Name()) == ".json" {
 			filePath := filepath.Join(questionPack, file.Name())
 			questions := processJSONFile(filePath, h, true)
+			if questions != nil {
+				allQuestions = append(allQuestions, questions...)
+			}
+		}
+	}
+
+	return allQuestions
+}
+
+func loadQuestionsFromURLWithFallback(url string, h *handler) []models.Question {
+	// Try to load from URL first
+	allQuestions := loadQuestionsFromURL(url, h)
+
+	// If URL loading failed, fallback to local defaultQuestion.json
+	if len(allQuestions) == 0 {
+		log.Println("Failed to load questions from URL, falling back to local defaultQuestion.json")
+		fallbackPath := "./questionPack/defaultQuestion.json"
+		questions := processJSONFile(fallbackPath, h, false)
+		if questions != nil {
 			allQuestions = append(allQuestions, questions...)
 		}
 	}
@@ -88,12 +136,20 @@ func loadQuestionsFromURL(url string, h *handler) []models.Question {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal("Error fetching from URL:", err)
+		log.Println("Error fetching from URL:", err)
+		return allQuestions // Return empty slice instead of crashing
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		log.Printf("HTTP error: %d %s", resp.StatusCode, resp.Status)
+		return allQuestions
+	}
+
 	questions := processJSONReader(resp.Body, h, url)
-	allQuestions = append(allQuestions, questions...)
+	if questions != nil {
+		allQuestions = append(allQuestions, questions...)
+	}
 
 	return allQuestions
 }
@@ -136,4 +192,22 @@ func processJSONReader(reader io.Reader, h *handler, source string) []models.Que
 
 	fmt.Printf("Loaded %d questions from %s\n", len(questionsObj), source)
 	return allQuestions
+}
+
+func loadEmergencyFallback(h *handler) []models.Question {
+	// Create a minimal hardcoded question as absolute last resort
+	question := models.Question{
+		Category:    "General",
+		Subcategory: "Default",
+		Text:        "What is 2 + 2?",
+		Type:        "multiple-choice",
+		Answers: []models.Answer{
+			{Text: "3", IsCorrect: false},
+			{Text: "4", IsCorrect: true},
+			{Text: "5", IsCorrect: false},
+		},
+	}
+
+	h.CreateQuestion(question)
+	return []models.Question{question}
 }
