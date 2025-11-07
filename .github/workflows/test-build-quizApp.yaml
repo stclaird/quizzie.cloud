@@ -56,14 +56,12 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/quizapp:latest
             ${{ secrets.DOCKER_USERNAME }}/quizapp:${{ github.sha }}
       - name: Install Scaleway CLI
-        if: github.event_name != 'pull_request'
         run: |
           curl -o scw https://github.com/scaleway/scaleway-cli/releases/latest/download/scaleway-cli_2.22.0_linux_amd64
           chmod +x scw
           sudo mv scw /usr/local/bin/
 
       - name: Deploy to Scaleway Serverless Containers
-        if: github.event_name != 'pull_request'
         run: |
           scw container container deploy \
             --name=quizapp \
