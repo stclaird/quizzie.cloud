@@ -195,14 +195,14 @@ export default function App() {
   const handleAnswerSelect = async (answerId) => {
     const currentQuestion = questions[currentQuestionIndex];
     const isMultipleChoice = currentQuestion.type === 'multichoice';
-    
+
     console.log('🎯 Answer selected:', {
       answerId,
       questionType: currentQuestion.type,
       isMultipleChoice,
       questionText: currentQuestion.questionText
     });
-    
+
     if (isMultipleChoice) {
       // For multiple choice, allow multiple selections
       const currentSelections = selectedAnswers[currentQuestionIndex] || [];
@@ -253,7 +253,7 @@ export default function App() {
     // Check if answer is correct using the dedicated answer endpoint
     try {
       const currentQuestion = questions[currentQuestionIndex];
-      
+
       if (!currentQuestion || !currentQuestion.ID) {
         console.error('❌ Current question is invalid:', currentQuestion);
         return;
@@ -261,11 +261,11 @@ export default function App() {
 
       console.log('🚀 Checking answer for question ID:', currentQuestion.ID, 'with answer ID:', answerId);
       const response = await fetch(`${API_BASE_URL}questions/answer/${currentQuestion.ID}/${answerId}`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       const answerResult = await response.json();
 
       console.log('📄 Answer check result:', {
@@ -330,7 +330,7 @@ export default function App() {
     // Check and update running score for multiple choice questions
     const currentQuestion = questions[currentQuestionIndex];
     const isMultipleChoice = currentQuestion.type === 'multichoice';
-    
+
     if (isMultipleChoice) {
       await updateRunningScoreForMultipleChoice();
     }
@@ -338,7 +338,7 @@ export default function App() {
     // Always hide the answer feedback when moving to next question or finishing
     setShowAnswerFeedback(false);
     setButtonEnabled(false);
-    
+
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
@@ -349,7 +349,7 @@ export default function App() {
   const updateRunningScoreForMultipleChoice = async () => {
     const currentQuestion = questions[currentQuestionIndex];
     const selectedAnswerData = selectedAnswers[currentQuestionIndex];
-    
+
     if (!selectedAnswerData || !Array.isArray(selectedAnswerData) || selectedAnswerData.length === 0) {
       return; // No answers selected
     }
@@ -358,11 +358,11 @@ export default function App() {
       // Convert array to string format expected by backend
       const answerString = selectedAnswerData.sort().join('');
       const response = await fetch(`${API_BASE_URL}questions/answer/${currentQuestion.ID}/${answerString}`);
-      
+
       if (response.ok) {
         const answerResult = await response.json();
         const isCorrect = answerResult.iscorrect || answerResult.IsCorrect || false;
-        
+
         console.log('🏃‍♂️ Running score update for multichoice:', {
           questionId: currentQuestion.ID,
           selectedAnswers: selectedAnswerData,
@@ -394,15 +394,15 @@ export default function App() {
           // Convert array to string format expected by backend
           const answerString = selectedAnswerData.sort().join('');
           const response = await fetch(`${API_BASE_URL}questions/answer/${question.ID}/${answerString}`);
-          
+
           if (!response.ok) {
             console.error(`Failed to check multiple choice answer for question ${question.ID}: ${response.status} ${response.statusText}`);
             continue;
           }
-          
+
           const answerResult = await response.json();
           const isCorrectForScore = answerResult.iscorrect || answerResult.IsCorrect || false;
-          
+
           console.log(`📊 Multiple choice score Q${i + 1}:`, {
             questionId: question.ID,
             selectedAnswers: selectedAnswerData,
@@ -420,20 +420,20 @@ export default function App() {
       } else {
         // Single answer question
         const selectedAnswerId = Array.isArray(selectedAnswerData) ? selectedAnswerData[0] : selectedAnswerData;
-        
+
         if (!selectedAnswerId) continue;
 
         try {
           const response = await fetch(`${API_BASE_URL}questions/answer/${question.ID}/${selectedAnswerId}`);
-          
+
           if (!response.ok) {
             console.error(`Failed to check answer for question ${question.ID}: ${response.status} ${response.statusText}`);
             continue;
           }
-          
+
           const answerResult = await response.json();
           const isCorrectForScore = answerResult.iscorrect || answerResult.IsCorrect || false;
-          
+
           console.log(`📊 Single answer score Q${i + 1}:`, {
             questionId: question.ID,
             selectedAnswerId,
@@ -519,10 +519,10 @@ export default function App() {
     const currentQuestion = questions[currentQuestionIndex];
     const selectedAnswerData = selectedAnswers[currentQuestionIndex];
     const isMultipleChoice = currentQuestion.type === 'multichoice';
-    
+
     // Handle both single and multiple selections
-    const selectedAnswerIds = isMultipleChoice && Array.isArray(selectedAnswerData) ? 
-      selectedAnswerData : 
+    const selectedAnswerIds = isMultipleChoice && Array.isArray(selectedAnswerData) ?
+      selectedAnswerData :
       (selectedAnswerData ? [selectedAnswerData] : []);
 
     return (
