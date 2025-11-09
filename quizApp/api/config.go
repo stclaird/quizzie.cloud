@@ -51,8 +51,15 @@ func CORSConfig(config Config) cors.Config {
 	corsConfig := cors.DefaultConfig()
 
 	// Use the port from config to build the allowed origin
-	allowedOrigin := "http://localhost" + config.port
-	corsConfig.AllowOrigins = []string{allowedOrigin}
+
+	corsConfig.AllowOrigins = []string{
+        "http://localhost:3000",  // React dev server
+        "http://localhost:8081",  // Expo dev server
+        "http://localhost:19000", // Expo web
+        "http://localhost:19006", // Expo web alternative
+        "http://127.0.0.1:8081",  // Alternative localhost
+        "exp://192.168.1.0:19000", // Expo mobile
+    }
 
 	corsConfig.AllowCredentials = true
 	corsConfig.AddAllowHeaders("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers", "Content-Type", "X-XSRF-TOKEN", "Accept", "Origin", "X-Requested-With", "Authorization")
