@@ -1,7 +1,7 @@
 export default {
   expo: {
     name: "fe",
-    slug: "fe", 
+    slug: "fe",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
