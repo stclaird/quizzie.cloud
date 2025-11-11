@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/google/generative-ai-go/genai"
 	"github.com/stclaird/quizzie.cloud/questionCreator/pkg/models"
@@ -35,15 +36,14 @@ func createPrompt(questionIn models.QuestionIn) string {
 
 
     for i := 0; i < numAns; i++ {
-        answersStr = append(answersStr, "{'text': string, 'iscorrect':bool}" )
+        answersStr = append(answersStr, "{'text': string, 'iscorrect': boolean}" )
     }
 
-    promptPrefix := fmt.Sprintf("Ask me %v questions regarding", questionIn.NumQuestions)
-    promptAnswers := fmt.Sprintf("give me %v correct answers and %v incorrect answers using this JSON schema:", numCorrectAns,numInCorrectAns)
-    promptJson := fmt.Sprintf("Questions = {'questionText': string, 'answerReference': string, 'answers':[ %s ]}", answersStr)
-    promptSuffix := "Return: <Question>"
+    promptPrefix := fmt.Sprintf("Generate %v questions about", questionIn.NumQuestions)
+    promptAnswers := fmt.Sprintf("Each question should have %v correct answers and %v incorrect answers.", numCorrectAns, numInCorrectAns)
+    promptJson := fmt.Sprintf("Return JSON in this exact format: {\"questions\": [{\"questionText\": string, \"answerReference\": string, \"answers\": [%s]}]}", strings.Join(answersStr, ", "))
 
-    fullQuestion := fmt.Sprintf("%s %s %s %s %s", promptPrefix, questionIn.QuestionText, promptAnswers, promptJson, promptSuffix )
+    fullQuestion := fmt.Sprintf("%s %s. %s %s", promptPrefix, questionIn.QuestionText, promptAnswers, promptJson)
 
     return fullQuestion
 }
@@ -65,21 +65,55 @@ func askAi (questionIn models.QuestionIn) models.Questions {
 	// Ask the model to respond with JSON.
 	model.ResponseMIMEType = "application/json"
 	prompt :=  createPrompt(questionIn)
+	fmt.Printf("Sending prompt to AI: %s\n", prompt)
 	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil {
+		fmt.Printf("Error calling AI API: %v\n", err)
 		log.Fatal(err)
 	}
 
+	fmt.Printf("Response received from AI\n")
+	fmt.Printf("Number of candidates: %d\n", len(resp.Candidates))
+
+	if len(resp.Candidates) == 0 {
+		fmt.Printf("No candidates returned from AI\n")
+		return models.Questions{}
+	}
+
+	fmt.Printf("Number of parts in first candidate: %d\n", len(resp.Candidates[0].Content.Parts))
+
 	var bytes []byte
 	var questions models.Questions
-	for _, part := range resp.Candidates[0].Content.Parts {
+	for i, part := range resp.Candidates[0].Content.Parts {
+		fmt.Printf("Processing part %d, type: %T\n", i, part)
 		if txt, ok := part.(genai.Text); ok {
 			bytes = []byte(txt)
+			fmt.Printf("Found text part with %d bytes\n", len(bytes))
 		}
 	}
 
-	json.Unmarshal(bytes, &questions)
+	if len(bytes) == 0 {
+		fmt.Printf("No text content found in AI response\n")
+		return models.Questions{}
+	}
 
+	fmt.Printf("AI Response (%d bytes): %s\n", len(bytes), string(bytes))
+
+	err = json.Unmarshal(bytes, &questions)
+	if err != nil {
+		fmt.Printf("Error unmarshaling AI response: %v\n", err)
+		fmt.Printf("Attempting to parse as raw JSON...\n")
+		// Try to see if it's valid JSON at all
+		var raw interface{}
+		if jsonErr := json.Unmarshal(bytes, &raw); jsonErr != nil {
+			fmt.Printf("Not valid JSON at all: %v\n", jsonErr)
+		} else {
+			fmt.Printf("Valid JSON but wrong structure. Raw content: %+v\n", raw)
+		}
+		return models.Questions{}
+	}
+
+	fmt.Printf("Successfully parsed %d questions from AI\n", len(questions.Questions))
 	return questions
 
 }

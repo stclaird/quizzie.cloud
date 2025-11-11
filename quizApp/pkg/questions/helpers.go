@@ -1,6 +1,8 @@
 package questions
 
 import (
+	"archive/zip"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -146,9 +148,22 @@ func loadQuestionsFromURL(url string, h *handler) []models.Question {
 		return allQuestions
 	}
 
-	questions := processJSONReader(resp.Body, h, url)
-	if questions != nil {
-		allQuestions = append(allQuestions, questions...)
+	// Check if this is a ZIP file by URL or content type
+	contentType := resp.Header.Get("Content-Type")
+	isZipFile := strings.Contains(url, ".zip") ||
+		strings.Contains(contentType, "application/zip") ||
+		strings.Contains(contentType, "application/x-zip") ||
+		strings.Contains(contentType, "application/octet-stream") // GitHub releases often use this
+
+	fmt.Printf("URL: %s, Content-Type: %s, isZipFile: %t\n", url, contentType, isZipFile)
+
+	if isZipFile {
+		allQuestions = processZipReader(resp.Body, h, url)
+	} else {
+		questions := processJSONReader(resp.Body, h, url)
+		if questions != nil {
+			allQuestions = append(allQuestions, questions...)
+		}
 	}
 
 	return allQuestions
@@ -191,6 +206,51 @@ func processJSONReader(reader io.Reader, h *handler, source string) []models.Que
 	}
 
 	fmt.Printf("Loaded %d questions from %s\n", len(questionsObj), source)
+	return allQuestions
+}
+
+func processZipReader(reader io.Reader, h *handler, source string) []models.Question {
+	var allQuestions []models.Question
+
+	// Read the entire response body into memory
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		log.Printf("Error reading ZIP data from %s: %v", source, err)
+		return allQuestions
+	}
+
+	fmt.Printf("Downloaded %d bytes from %s\n", len(data), source)
+
+	// Create a zip reader from the data
+	zipReader, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
+	if err != nil {
+		log.Printf("Error creating ZIP reader for %s: %v", source, err)
+		return allQuestions
+	}
+
+	fmt.Printf("Processing ZIP file from %s with %d files\n", source, len(zipReader.File))
+
+	// Process each file in the ZIP
+	for _, file := range zipReader.File {
+		// Only process JSON files
+		if filepath.Ext(file.Name) == ".json" {
+			fmt.Printf("Processing JSON file: %s\n", file.Name)
+
+			fileReader, err := file.Open()
+			if err != nil {
+				log.Printf("Error opening file %s in ZIP: %v", file.Name, err)
+				continue
+			}
+			defer fileReader.Close()
+
+			questions := processJSONReader(fileReader, h, fmt.Sprintf("%s/%s", source, file.Name))
+			if questions != nil {
+				allQuestions = append(allQuestions, questions...)
+			}
+		}
+	}
+
+	fmt.Printf("Loaded %d questions from ZIP file %s\n", len(allQuestions), source)
 	return allQuestions
 }
 

@@ -35,16 +35,16 @@ Generates quiz questions on a specified topic using AI.
 #### Example Request
 
 ```bash
-curl -X POST http://localhost:8080/questions \
+curl -L -X POST http://localhost:5001/questions \
   -H "Content-Type: application/json" \
   -d '{
-    "questionText": "Docker containers and orchestration",
-    "numincorrectans": 3,
-    "numcorrectans": 1,
-    "numquestions": 5,
-    "category": "DevOps",
-    "subcategory": "Containerization"
-  }'
+    "questionText": "kubernetes etcd",
+    "numincorrectans" : 1,
+    "numcorrectans" : 2,
+    "numquestions" : 10,
+    "category" : "kubernetes",
+    "subcategory" : "etc"
+}'
 ```
 
 #### Example Response
