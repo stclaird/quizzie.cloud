@@ -40,6 +40,15 @@ jobs:
                   cd quizApp/fe
                   npx expo export --platform web
 
+            - name: Fix paths for GitHub Pages
+              run: |
+                  cd quizApp/fe/dist
+                  # Fix absolute paths to relative paths in HTML
+                  sed -i 's|href="/|href="./|g' index.html
+                  sed -i 's|src="/_expo/|src="./_expo/|g' index.html
+                  echo "Fixed paths in index.html:"
+                  cat index.html
+
             - name: Setup Pages
               uses: actions/configure-pages@v4
 
