@@ -29,7 +29,7 @@ func removeCorrectAnswerfield(questions []models.Question) (questionsNoAnswers [
 		questionnoanswer.ID = question.ID
 		questionnoanswer.Category = question.Category
 		questionnoanswer.Subcategory = question.Subcategory
-		questionnoanswer.QuestionText = question.QuestionText
+		questionnoanswer.Text = question.Text
 		questionnoanswer.Type = question.Type
 		for _, answer := range question.Answers {
 			a := struct {
