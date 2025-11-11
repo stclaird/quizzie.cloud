@@ -36,6 +36,9 @@ jobs:
                   npm ci
 
             - name: Build web app
+              env:
+                  NODE_ENV: production
+                  EXPO_PUBLIC_API_URL: ${{ secrets.API_BASE_URL }}
               run: |
                   cd quizApp/fe
                   npx expo export --platform web

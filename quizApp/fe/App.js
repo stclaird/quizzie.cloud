@@ -9,9 +9,12 @@ import {
   Alert,
 } from 'react-native';
 
-const API_BASE_URL = process.env.NODE_ENV === 'production'
-  ? 'https://your-api-domain.com/'
-  : 'http://localhost:8080/';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8080/';
+
+// Debug: Log which API URL is being used
+console.log('🌐 Environment:', process.env.NODE_ENV);
+console.log('🔗 API Base URL:', API_BASE_URL);
+console.log('🔗 EXPO_PUBLIC_API_URL:', process.env.EXPO_PUBLIC_API_URL);
 
 export default function App() {
   const [categories, setCategories] = useState([]);
