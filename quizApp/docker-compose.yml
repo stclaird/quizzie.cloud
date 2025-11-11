@@ -8,7 +8,7 @@ services:
       - "8080:8080"
     environment:
       - ENV=production
-      - QUESTION_PATH=https://raw.githubusercontent.com/stclaird/questions/refs/heads/main/gcp_gce_loadbalancer.json
+      - QUESTION_PATH=https://raw.githubusercontent.com/stclaird/questionPack/refs/heads/main/gcp-gke-b32df3c9-3274-4c2f-8769-dc409e5b5466.json
     volumes:
       - ./api/questionPack:/project/api/questionPack:ro
     restart: unless-stopped
