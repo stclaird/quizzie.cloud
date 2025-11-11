@@ -1,33 +1,34 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [ main ]
-    paths: [ 'quizApp/fe/**' ]
+    push:
+        branches: [main]
+        paths: ["quizApp/fe/**"]
+    workflow_dispatch:
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        
-    - name: Install dependencies
-      run: |
-        cd quizApp/fe
-        npm install
-        
-    - name: Build web app
-      run: |
-        cd quizApp/fe
-        npx expo export --platform web
-        
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./quizApp/fe/dist
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: "18"
+
+            - name: Install dependencies
+              run: |
+                  cd quizApp/fe
+                  npm install
+
+            - name: Build web app
+              run: |
+                  cd quizApp/fe
+                  npx expo export --platform web
+
+            - name: Deploy to GitHub Pages
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./quizApp/fe/dist

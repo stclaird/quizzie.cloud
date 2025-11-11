@@ -9,7 +9,9 @@ import {
   Alert,
 } from 'react-native';
 
-const API_BASE_URL = 'http://localhost:8080/'; // With trailing slash
+const API_BASE_URL = process.env.NODE_ENV === 'production'
+  ? 'https://your-api-domain.com/'
+  : 'http://localhost:8080/';
 
 export default function App() {
   const [categories, setCategories] = useState([]);
