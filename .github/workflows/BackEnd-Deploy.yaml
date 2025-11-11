@@ -1,4 +1,4 @@
-name: Test and Build QuizApp
+name: Deploy API BackEnd to Scaleway Serverless Containers
 
 on:
   push:
