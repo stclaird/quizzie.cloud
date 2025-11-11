@@ -5,12 +5,10 @@ on:
     branches: [main]
     paths:
       - "quizApp/**"
-      - "api/**"
   pull_request:
     branches: [main]
     paths:
       - "quizApp/**"
-      - "api/**"
   workflow_dispatch:
 
 jobs:
@@ -64,14 +62,9 @@ jobs:
 
       - name: Deploy to Scaleway Serverless Containers
         run: |
-          scw container container deploy \
-            --name=quizapp \
+          scw container container update 77b86c67-27aa-426d-825f-4efca82f803c \
             --registry-image=rg.fr-par.scw.cloud/funcscwquizzierhg7bjpx/quizapp:${{ github.sha }} \
-            --port=8080 \
-            --cpu-limit=100 \
-            --memory-limit=256 \
-            --min-scale=0 \
-            --max-scale=5 \
+            --environment-variables="QUESTION_PATH=${{ vars.QUESTION_PATH || 'https://raw.githubusercontent.com/stclaird/questionPack/refs/heads/main/gcp-gke-b32df3c9-3274-4c2f-8769-dc409e5b5466.json' }}" \
             --region=fr-par
         env:
           SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
