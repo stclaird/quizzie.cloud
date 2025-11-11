@@ -59,6 +59,7 @@ func CORSConfig(config Config) cors.Config {
         "http://localhost:19006", // Expo web alternative
         "http://127.0.0.1:8081",  // Alternative localhost
         "exp://192.168.1.0:19000", // Expo mobile
+        "https://stclaird.github.io", // GitHub Pages
     }
 
 	corsConfig.AllowCredentials = true
