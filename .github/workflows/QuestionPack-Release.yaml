@@ -10,6 +10,7 @@ on:
         paths:
             - "questionPack/**"
         types: [closed]
+    workflow_dispatch:
 
 jobs:
     detect-changes:
