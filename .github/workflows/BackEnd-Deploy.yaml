@@ -64,7 +64,7 @@ jobs:
         run: |
           scw container container update 77b86c67-27aa-426d-825f-4efca82f803c \
             --registry-image=rg.fr-par.scw.cloud/funcscwquizzierhg7bjpx/quizapp:${{ github.sha }} \
-            --environment-variables="QUESTION_PATH=${{ vars.QUESTION_PATH || 'https://raw.githubusercontent.com/stclaird/questionPack/refs/heads/main/gcp-gke-b32df3c9-3274-4c2f-8769-dc409e5b5466.json' }}" \
+            --environment-variables="QUESTION_PATH=${{ vars.QUESTION_PATH || 'https://github.com/stclaird/quizzie.cloud/releases/latest/download/manifest.json' }}" \
             --region=fr-par
         env:
           SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
