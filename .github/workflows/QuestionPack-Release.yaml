@@ -152,60 +152,62 @@ jobs:
           --title "Question Pack - Latest" \
           --notes-file release-notes.md \
           --latest \
-          release-assets/*                      - name: Install Scaleway CLI
-                        if: steps.changes.outputs.questionpack_changed != '0'
-                        run: |
-                            curl -o scw https://github.com/scaleway/scaleway-cli/releases/latest/download/scaleway-cli_2.22.0_linux_amd64
-                            chmod +x scw
-                            sudo mv scw /usr/local/bin/
+          release-assets/*
 
-                      - name: Restart Scaleway Container with Latest Question Pack
-                        if: steps.changes.outputs.questionpack_changed != '0'
-                        env:
-                            SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
-                            SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
-                            SCW_DEFAULT_PROJECT_ID: ${{ secrets.SCW_PROJECT_ID }}
-                        run: |
-                            echo "🔄 Updating Scaleway container with latest question pack release..."
+    - name: Install Scaleway CLI
+      if: steps.changes.outputs.questionpack_changed != '0'
+      run: |
+        curl -o scw https://github.com/scaleway/scaleway-cli/releases/latest/download/scaleway-cli_2.22.0_linux_amd64
+        chmod +x scw
+        sudo mv scw /usr/local/bin/
 
-                            # Set the question pack URL to point to the latest release manifest
-                            QUESTION_PACK_URL="https://github.com/${{ github.repository }}/releases/latest/download/manifest.json"
+    - name: Restart Scaleway Container with Latest Question Pack
+      if: steps.changes.outputs.questionpack_changed != '0'
+      env:
+        SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
+        SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+        SCW_DEFAULT_PROJECT_ID: ${{ secrets.SCW_PROJECT_ID }}
+      run: |
+        echo "🔄 Updating Scaleway container with latest question pack release..."
 
-                            echo "📦 Question Pack URL: $QUESTION_PACK_URL"
+        # Set the question pack URL to point to the latest release ZIP
+        QUESTION_PACK_URL="https://github.com/${{ github.repository }}/releases/latest/download/questionpack-latest.zip"
 
-                            # Update the container with the new environment variable
-                            scw container container update 77b86c67-27aa-426d-825f-4efca82f803c \
-                              --environment-variables="QUESTION_PACK=$QUESTION_PACK_URL" \
-                              --region=fr-par
+        echo "📦 Question Pack URL: $QUESTION_PACK_URL"
 
-                            echo "✅ Container updated successfully!"
-                            echo "🚀 The backend will now use the latest question pack release."
+        # Update the container with the new environment variable
+        scw container container update 77b86c67-27aa-426d-825f-4efca82f803c \
+          --environment-variables="QUESTION_PACK=$QUESTION_PACK_URL" \
+          --region=fr-par
 
-                      - name: Summary
-                        if: steps.changes.outputs.questionpack_changed != '0'
-                        run: |
-                            echo "## 🎉 Question Pack Release Created & Deployed!" >> $GITHUB_STEP_SUMMARY
-                            echo "" >> $GITHUB_STEP_SUMMARY
-                            echo "**Timestamp:** ${{ steps.archive.outputs.timestamp }}" >> $GITHUB_STEP_SUMMARY
-                            echo "**Files Changed:** ${{ steps.changes.outputs.questionpack_changed }}" >> $GITHUB_STEP_SUMMARY
-                            echo "**Total Files:** ${{ steps.changes.outputs.total_files }}" >> $GITHUB_STEP_SUMMARY
-                            echo "" >> $GITHUB_STEP_SUMMARY
-                            echo "**Changed Files:**" >> $GITHUB_STEP_SUMMARY
-                            echo '```' >> $GITHUB_STEP_SUMMARY
-                            echo '${{ steps.changes.outputs.changed_files }}' >> $GITHUB_STEP_SUMMARY
-                            echo '```' >> $GITHUB_STEP_SUMMARY
-                            echo "" >> $GITHUB_STEP_SUMMARY
-                            echo "### � Deployment Status" >> $GITHUB_STEP_SUMMARY
-                            echo "- ✅ **Release Created:** [latest](https://github.com/${{ github.repository }}/releases/tag/latest)" >> $GITHUB_STEP_SUMMARY
-                            echo "- ✅ **Container Updated:** Scaleway container restarted with new question pack" >> $GITHUB_STEP_SUMMARY
-                            echo "- ✅ **Environment Variable:** \`QUESTION_PACK=https://github.com/${{ github.repository }}/releases/latest/download/manifest.json\`" >> $GITHUB_STEP_SUMMARY
-                            echo "" >> $GITHUB_STEP_SUMMARY
-                            echo "The backend is now serving the latest question pack! 🎯" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Container updated successfully!"
+        echo "🚀 The backend will now use the latest question pack release."
 
-                      - name: No changes detected
-                        if: steps.changes.outputs.questionpack_changed == '0'
-                        run: |
-                            echo "## ℹ️ No Question Pack Changes" >> $GITHUB_STEP_SUMMARY
-                            echo "" >> $GITHUB_STEP_SUMMARY
-                            echo "No changes detected in the \`questionPack/\` directory." >> $GITHUB_STEP_SUMMARY
-                            echo "The latest release remains unchanged." >> $GITHUB_STEP_SUMMARY
+    - name: Summary
+      if: steps.changes.outputs.questionpack_changed != '0'
+      run: |
+        echo "## 🎉 Question Pack Release Created & Deployed!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Timestamp:** ${{ env.timestamp }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Files Changed:** ${{ steps.changes.outputs.questionpack_changed }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Total Files:** ${{ steps.changes.outputs.total_files }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Changed Files:**" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo '${{ steps.changes.outputs.changed_files }}' >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🚀 Deployment Status" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ **Release Created:** [latest](https://github.com/${{ github.repository }}/releases/tag/latest)" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ **Container Updated:** Scaleway container restarted with new question pack" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ **Environment Variable:** \`QUESTION_PACK=https://github.com/${{ github.repository }}/releases/latest/download/questionpack-latest.zip\`" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "The backend is now serving the latest question pack! 🎯" >> $GITHUB_STEP_SUMMARY
+
+    - name: No changes detected
+      if: steps.changes.outputs.questionpack_changed == '0'
+      run: |
+        echo "## ℹ️ No Question Pack Changes" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "No changes detected in the \`questionPack/\` directory." >> $GITHUB_STEP_SUMMARY
+        echo "The latest release remains unchanged." >> $GITHUB_STEP_SUMMARY
