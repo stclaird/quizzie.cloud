@@ -199,11 +199,15 @@ export default function App() {
 
   const handleAnswerSelect = async (answerId) => {
     const currentQuestion = questions[currentQuestionIndex];
-    const isMultipleChoice = currentQuestion.type === 'multichoice';
+    
+    // Better logic to detect multiple choice: check if multiple answers are correct
+    const correctAnswersCount = currentQuestion.answers?.filter(answer => answer.iscorrect || answer.IsCorrect).length || 0;
+    const isMultipleChoice = correctAnswersCount > 1;
 
     console.log('🎯 Answer selected:', {
       answerId,
       questionType: currentQuestion.type,
+      correctAnswersCount,
       isMultipleChoice,
       questionText: currentQuestion.questionText
     });
@@ -334,7 +338,8 @@ export default function App() {
 
     // Check and update running score for multiple choice questions
     const currentQuestion = questions[currentQuestionIndex];
-    const isMultipleChoice = currentQuestion.type === 'multichoice';
+    const correctAnswersCount = currentQuestion.answers?.filter(answer => answer.iscorrect || answer.IsCorrect).length || 0;
+    const isMultipleChoice = correctAnswersCount > 1;
 
     if (isMultipleChoice) {
       await updateRunningScoreForMultipleChoice();
@@ -390,7 +395,8 @@ export default function App() {
     for (let i = 0; i < questions.length; i++) {
       const question = questions[i];
       const selectedAnswerData = selectedAnswers[i];
-      const isMultipleChoice = question.type === 'multichoice';
+      const correctAnswersCount = question.answers?.filter(answer => answer.iscorrect || answer.IsCorrect).length || 0;
+      const isMultipleChoice = correctAnswersCount > 1;
 
       if (isMultipleChoice && Array.isArray(selectedAnswerData)) {
         // For multiple choice, check if all selected answers are correct
@@ -523,7 +529,10 @@ export default function App() {
   if (currentView === 'quiz' && questions.length > 0) {
     const currentQuestion = questions[currentQuestionIndex];
     const selectedAnswerData = selectedAnswers[currentQuestionIndex];
-    const isMultipleChoice = currentQuestion.type === 'multichoice';
+    
+    // Better logic to detect multiple choice: check if multiple answers are correct
+    const correctAnswersCount = currentQuestion.answers?.filter(answer => answer.iscorrect || answer.IsCorrect).length || 0;
+    const isMultipleChoice = correctAnswersCount > 1;
 
     // Handle both single and multiple selections
     const selectedAnswerIds = isMultipleChoice && Array.isArray(selectedAnswerData) ?
