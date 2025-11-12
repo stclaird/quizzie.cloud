@@ -41,7 +41,7 @@ func createPrompt(questionIn models.QuestionIn) string {
 
     promptPrefix := fmt.Sprintf("Generate %v questions about", questionIn.NumQuestions)
     promptAnswers := fmt.Sprintf("Each question should have %v correct answers and %v incorrect answers.", numCorrectAns, numInCorrectAns)
-    promptJson := fmt.Sprintf("Return JSON in this exact format: {\"questions\": [{\"questionText\": string, \"answerReference\": string, \"answers\": [%s]}]}", strings.Join(answersStr, ", "))
+    promptJson := fmt.Sprintf("Return JSON in this exact format: {\"questions\": [{\"questionText\": string, \"category\": string, \"subcategory\": string, \"answerReference\": string, \"answers\": [%s]}]}. Make sure each question has appropriate category and subcategory based on its content.", strings.Join(answersStr, ", "))
 
     fullQuestion := fmt.Sprintf("%s %s. %s %s", promptPrefix, questionIn.QuestionText, promptAnswers, promptJson)
 

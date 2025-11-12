@@ -199,7 +199,7 @@ export default function App() {
 
   const handleAnswerSelect = async (answerId) => {
     const currentQuestion = questions[currentQuestionIndex];
-    
+
     // Better logic to detect multiple choice: check if multiple answers are correct
     const correctAnswersCount = currentQuestion.answers?.filter(answer => answer.iscorrect || answer.IsCorrect).length || 0;
     const isMultipleChoice = correctAnswersCount > 1;
@@ -529,7 +529,7 @@ export default function App() {
   if (currentView === 'quiz' && questions.length > 0) {
     const currentQuestion = questions[currentQuestionIndex];
     const selectedAnswerData = selectedAnswers[currentQuestionIndex];
-    
+
     // Better logic to detect multiple choice: check if multiple answers are correct
     const correctAnswersCount = currentQuestion.answers?.filter(answer => answer.iscorrect || answer.IsCorrect).length || 0;
     const isMultipleChoice = correctAnswersCount > 1;

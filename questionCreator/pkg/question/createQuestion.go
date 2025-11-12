@@ -3,6 +3,7 @@ package question
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"os"
 
@@ -49,6 +50,17 @@ func createQuestion(ctx *gin.Context) {
 		questionSubCategory = questionIn.Subcategory
 	}
 
+	// Randomly choose number of correct and incorrect answers if not specified
+	if questionIn.NumCorrectAns == 0 {
+		questionIn.NumCorrectAns = rand.Intn(3) + 1 // Random between 1-3
+	}
+
+	if questionIn.NumInCorrectAns == 0 {
+		questionIn.NumInCorrectAns = rand.Intn(3) + 2 // Random between 2-4
+	}
+
+	fmt.Printf("Using %d correct answers and %d incorrect answers\n", questionIn.NumCorrectAns, questionIn.NumInCorrectAns)
+
     questionsOut := askAi(questionIn)
 
 	// Check if AI returned any questions
@@ -65,8 +77,15 @@ func createQuestion(ctx *gin.Context) {
 	for i := range questionsOut.Questions {
 
 		questionOut := questionsOut.Questions[i]
-        questionOut.Subcategory = questionSubCategory
-		questionOut.Category = questionCategory
+
+		// Only override category/subcategory if AI didn't provide them or they're empty
+		if questionOut.Category == "" {
+			questionOut.Category = questionCategory
+		}
+		if questionOut.Subcategory == "" {
+			questionOut.Subcategory = questionSubCategory
+		}
+
 		questionOut.DateAdded = createDate()
 
 		questionsOutFile = append(questionsOutFile, questionOut)
