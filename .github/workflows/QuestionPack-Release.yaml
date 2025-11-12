@@ -116,37 +116,37 @@ jobs:
       run: |
         # Get timestamp from environment
         TIMESTAMP="${{ env.timestamp }}"
-        
+
         # Create the release notes
         cat > release-notes.md << EOF
         # Question Pack Release - $TIMESTAMP
-        
+
         ## 📦 Updated Question Packs
-        
+
         This release contains the latest question packs with the following changes:
-        
+
         **Changed Files:**
         \`\`\`
         ${{ steps.changes.outputs.changed_files }}
         \`\`\`
-        
+
         **Total Question Pack Files:** ${{ steps.changes.outputs.total_files }}
-        
+
         **Commit:** ${{ github.sha }}
-        
+
         ## 📥 Downloads
-        
+
         - **questionpack-$TIMESTAMP.tar.gz** - Compressed archive (tar.gz)
         - **questionpack-$TIMESTAMP.zip** - Compressed archive (zip)
         - **questionpack-latest.zip** - Always latest (predictable filename)
         - **questionpack-latest.tar.gz** - Always latest (predictable filename)
         - **manifest.json** - Release metadata and file listing
-        
+
         ## 🔄 Auto-Generated
-        
+
         This release was automatically generated when changes were detected in the \`questionPack/\` directory.
         EOF
-        
+
         # Create the release
         gh release create latest \
           --title "Question Pack - Latest" \
