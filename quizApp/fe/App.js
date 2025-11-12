@@ -161,14 +161,32 @@ export default function App() {
   const fetchQuestionsByCategory = async (category, subcategory = null) => {
     try {
       setLoading(true);
-      let url = `${API_BASE_URL}questions/?category=${encodeURIComponent(category)}`;
+      let url;
       if (subcategory) {
-        url += `&subcategory=${encodeURIComponent(subcategory)}`;
+        // Use path parameters for category and subcategory filtering
+        url = `${API_BASE_URL}questions/${encodeURIComponent(category)}/${encodeURIComponent(subcategory)}`;
+      } else {
+        // For category-only filtering, we need to get all questions and filter client-side
+        // since there's no backend endpoint for category-only filtering
+        url = `${API_BASE_URL}questions/`;
       }
 
+      console.log('🔗 Fetching questions from:', url);
       const response = await fetch(url);
       const data = await response.json();
-      setQuestions(data || []);
+
+      // Filter questions if we're doing category-only filtering
+      let filteredQuestions = data || [];
+      if (!subcategory && category) {
+        filteredQuestions = (data || []).filter(question =>
+          question.category && question.category.toLowerCase() === category.toLowerCase()
+        );
+        console.log(`📊 Category filtering: ${data.length} total → ${filteredQuestions.length} for category "${category}"`);
+      } else if (subcategory) {
+        console.log(`📊 Subcategory filtering: Got ${filteredQuestions.length} questions for "${category}/${subcategory}"`);
+      }
+
+      setQuestions(filteredQuestions);
       setCurrentQuestionIndex(0);
       setSelectedAnswers({});
       setScore(0);
