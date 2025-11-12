@@ -30,6 +30,8 @@ export default function App() {
   const [showAnswerFeedback, setShowAnswerFeedback] = useState(false);
   const [buttonEnabled, setButtonEnabled] = useState(false);
   const [runningScore, setRunningScore] = useState(0);
+  const [showQuestionResult, setShowQuestionResult] = useState(false);
+  const [currentQuestionResult, setCurrentQuestionResult] = useState(null);
 
   useEffect(() => {
     fetchCategories();
@@ -197,69 +199,32 @@ export default function App() {
     fetchQuestionsByCategory(selectedCategory.category, subcategory.subcategoryname);
   };
 
-  const handleAnswerSelect = async (answerId) => {
-    const currentQuestion = questions[currentQuestionIndex];
+  const handleAnswerSelect = (answerId) => {
+    const currentSelections = selectedAnswers[currentQuestionIndex] || [];
 
-    // Better logic to detect multiple choice: check if multiple answers are correct
-    const correctAnswersCount = currentQuestion.answers?.filter(answer => answer.iscorrect || answer.IsCorrect).length || 0;
-    const isMultipleChoice = correctAnswersCount > 1;
+    // Always allow multiple selections - we'll determine the question type on submission
+    const selectionsArray = Array.isArray(currentSelections) ? currentSelections : [currentSelections].filter(Boolean);
+    const isAlreadySelected = selectionsArray.includes(answerId);
 
-    console.log('🎯 Answer selected:', {
-      answerId,
-      questionType: currentQuestion.type,
-      correctAnswersCount,
-      isMultipleChoice,
-      questionText: currentQuestion.questionText
+    let newSelections;
+    if (isAlreadySelected) {
+      // Remove if already selected
+      newSelections = selectionsArray.filter(id => id !== answerId);
+    } else {
+      // Add to selections
+      newSelections = [...selectionsArray, answerId];
+    }
+
+    setSelectedAnswers({
+      ...selectedAnswers,
+      [currentQuestionIndex]: newSelections,
     });
 
-    if (isMultipleChoice) {
-      // For multiple choice, allow multiple selections
-      const currentSelections = selectedAnswers[currentQuestionIndex] || [];
-      // Ensure currentSelections is always an array for multiple choice
-      const selectionsArray = Array.isArray(currentSelections) ? currentSelections : [];
-      const isAlreadySelected = selectionsArray.includes(answerId);
-
-      let newSelections;
-      if (isAlreadySelected) {
-        // Remove if already selected
-        newSelections = selectionsArray.filter(id => id !== answerId);
-      } else {
-        // Add to selections
-        newSelections = [...selectionsArray, answerId];
-      }
-
-      console.log('🔄 Multiple choice selection:', {
-        questionIndex: currentQuestionIndex,
-        answerId,
-        previousSelections: selectionsArray,
-        newSelections,
-        isAlreadySelected
-      });
-
-      setSelectedAnswers({
-        ...selectedAnswers,
-        [currentQuestionIndex]: newSelections,
-      });
-
-      // Enable button immediately for multiple choice (no feedback delay)
-      setButtonEnabled(true);
-    } else {
-      // For single answer questions (true/false, etc.)
-      setSelectedAnswers({
-        ...selectedAnswers,
-        [currentQuestionIndex]: answerId,
-      });
-
-      // Disable the button initially to give time to see feedback
-      setButtonEnabled(false);
-
-      // Check answer immediately for single-answer questions
-      await checkSingleAnswer(answerId);
-    }
+    // Enable submit button if at least one answer is selected
+    setButtonEnabled(newSelections.length > 0);
   };
 
-  const checkSingleAnswer = async (answerId) => {
-    // Check if answer is correct using the dedicated answer endpoint
+  const checkAnswerAndDetermineType = async (answerId) => {
     try {
       const currentQuestion = questions[currentQuestionIndex];
 
@@ -268,7 +233,7 @@ export default function App() {
         return;
       }
 
-      console.log('🚀 Checking answer for question ID:', currentQuestion.ID, 'with answer ID:', answerId);
+      console.log('🚀 Checking answer to determine question type for question ID:', currentQuestion.ID, 'with answer ID:', answerId);
       const response = await fetch(`${API_BASE_URL}questions/answer/${currentQuestion.ID}/${answerId}`);
 
       if (!response.ok) {
@@ -276,83 +241,144 @@ export default function App() {
       }
 
       const answerResult = await response.json();
-
-      console.log('📄 Answer check result:', {
-        response: answerResult,
-        isCorrect: answerResult.iscorrect || answerResult.IsCorrect,
-        correctAnswer: answerResult.correctanswer || answerResult.CorrectAnswer
-      });
-
       const isCorrect = answerResult.iscorrect || answerResult.IsCorrect || false;
       const correctAnswers = answerResult.correctanswer || answerResult.CorrectAnswer || [];
-      const correctAnswerId = correctAnswers.length > 0 ? correctAnswers[0].ID : null;
+      const totalCorrectAnswers = correctAnswers.length;
+      const isMultipleChoice = totalCorrectAnswers > 1;
 
-      console.log('🔍 Debug answer checking:', {
+      console.log('🎯 Answer analysis:', {
         questionId: currentQuestion.ID,
-        questionType: currentQuestion.type,
-        questionText: currentQuestion.questionText,
         selectedAnswerId: answerId,
         isCorrect,
-        correctAnswerId,
+        totalCorrectAnswers,
+        isMultipleChoice,
         correctAnswers
       });
 
+      // Store the question type information and feedback
       setAnswerFeedback({
         ...answerFeedback,
         [currentQuestionIndex]: {
           isCorrect,
-          correctAnswerId,
-          selectedAnswerId: answerId
+          selectedAnswerId: answerId,
+          isMultipleChoice,
+          totalCorrectAnswers,
+          correctAnswers
         }
       });
 
-      // Update running score for single-answer questions
-      if (isCorrect) {
-        setRunningScore(prevScore => prevScore + 1);
-      }
+      if (isMultipleChoice) {
+        // This is a multiple choice question - convert to multiple selection mode
+        console.log('🔄 Detected multiple choice question, switching to multi-select mode');
 
-      setShowAnswerFeedback(true);
+        // Convert the single selection to array format for multiple choice
+        setSelectedAnswers({
+          ...selectedAnswers,
+          [currentQuestionIndex]: [answerId],
+        });
 
-      // Enable the button after seeing feedback for 1.5 seconds
-      setTimeout(() => {
+        // Enable button immediately and don't show single-answer feedback
         setButtonEnabled(true);
-      }, 1500);
 
-      // Hide feedback after 4 seconds (giving more time to see the result)
-      setTimeout(() => {
+        // Don't show the single-answer feedback for multiple choice
         setShowAnswerFeedback(false);
-      }, 4000);
+      } else {
+        // This is a single choice question - show normal feedback
+        if (isCorrect) {
+          setRunningScore(prevScore => prevScore + 1);
+        }
+
+        setShowAnswerFeedback(true);
+
+        // Enable the button after seeing feedback
+        setTimeout(() => {
+          setButtonEnabled(true);
+        }, 1500);
+
+        // Hide feedback after 4 seconds
+        setTimeout(() => {
+          setShowAnswerFeedback(false);
+        }, 4000);
+      }
 
     } catch (error) {
       console.error('Error checking answer:', error);
     }
   };
 
+  const checkSingleAnswer = async (answerId) => {
+    // This is now just a wrapper for the main checking function
+    await checkAnswerAndDetermineType(answerId);
+  };
+
   const nextQuestion = async () => {
-    console.log('🚀 Next button clicked:', {
-      currentQuestionIndex,
-      totalQuestions: questions.length,
-      selectedAnswers: selectedAnswers[currentQuestionIndex],
-      isLastQuestion: currentQuestionIndex >= questions.length - 1
-    });
+    if (showQuestionResult) {
+      // User is viewing result screen, move to next question or finish
+      setShowQuestionResult(false);
+      setCurrentQuestionResult(null);
+      setButtonEnabled(false);
 
-    // Check and update running score for multiple choice questions
+      if (currentQuestionIndex < questions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      } else {
+        calculateScore();
+      }
+    } else {
+      // User is submitting their answer, check it and show result
+      await submitAndShowResult();
+    }
+  };
+
+  const submitAndShowResult = async () => {
     const currentQuestion = questions[currentQuestionIndex];
-    const correctAnswersCount = currentQuestion.answers?.filter(answer => answer.iscorrect || answer.IsCorrect).length || 0;
-    const isMultipleChoice = correctAnswersCount > 1;
+    const selectedAnswerData = selectedAnswers[currentQuestionIndex];
 
-    if (isMultipleChoice) {
-      await updateRunningScoreForMultipleChoice();
+    if (!selectedAnswerData || selectedAnswerData.length === 0) {
+      return;
     }
 
-    // Always hide the answer feedback when moving to next question or finishing
-    setShowAnswerFeedback(false);
-    setButtonEnabled(false);
+    try {
+      // Convert selections to API format
+      const answerString = Array.isArray(selectedAnswerData)
+        ? selectedAnswerData.sort().join('')
+        : selectedAnswerData.toString();
 
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      calculateScore();
+      console.log('🚀 Submitting answer:', {
+        questionId: currentQuestion.ID,
+        selectedAnswers: selectedAnswerData,
+        answerString
+      });
+
+      const response = await fetch(`${API_BASE_URL}questions/answer/${currentQuestion.ID}/${answerString}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const answerResult = await response.json();
+      const isCorrect = answerResult.iscorrect || answerResult.IsCorrect || false;
+      const correctAnswers = answerResult.correctanswer || answerResult.CorrectAnswer || [];
+
+      // Update running score
+      if (isCorrect) {
+        setRunningScore(prevScore => prevScore + 1);
+      }
+
+      // Prepare result data for display
+      setCurrentQuestionResult({
+        isCorrect,
+        correctAnswers,
+        userAnswers: selectedAnswerData,
+        questionText: currentQuestion.questionText,
+        allAnswers: currentQuestion.answers
+      });
+
+      // Show the result screen
+      setShowQuestionResult(true);
+      setButtonEnabled(true); // Enable "Continue" button
+
+    } catch (error) {
+      console.error('Error checking answer:', error);
     }
   };
 
@@ -395,8 +421,8 @@ export default function App() {
     for (let i = 0; i < questions.length; i++) {
       const question = questions[i];
       const selectedAnswerData = selectedAnswers[i];
-      const correctAnswersCount = question.answers?.filter(answer => answer.iscorrect || answer.IsCorrect).length || 0;
-      const isMultipleChoice = correctAnswersCount > 1;
+      const questionFeedback = answerFeedback[i];
+      const isMultipleChoice = questionFeedback?.isMultipleChoice || false;
 
       if (isMultipleChoice && Array.isArray(selectedAnswerData)) {
         // For multiple choice, check if all selected answers are correct
@@ -525,19 +551,95 @@ export default function App() {
     );
   }
 
+  // Question Result Screen
+  if (showQuestionResult && currentQuestionResult) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Question Result</Text>
+        </View>
+
+        <View style={styles.questionHeader}>
+          <Text style={styles.questionCounter}>
+            Question {currentQuestionIndex + 1} of {questions.length}
+          </Text>
+          <View style={styles.scoreContainer}>
+            <Text style={styles.runningScore}>
+              Score: {runningScore} / {questions.length}
+            </Text>
+            <Text style={styles.percentageScore}>
+              {questions.length > 0 ? Math.round((runningScore / questions.length) * 100) : 0}%
+            </Text>
+          </View>
+        </View>
+
+        <ScrollView style={styles.content}>
+          {/* Question */}
+          <Text style={styles.questionText}>{currentQuestionResult.questionText}</Text>
+
+          {/* Overall Result */}
+          <View style={[
+            styles.resultContainer,
+            currentQuestionResult.isCorrect ? styles.correctResult : styles.incorrectResult
+          ]}>
+            <Text style={styles.resultText}>
+              {currentQuestionResult.isCorrect ? '✅ CORRECT!' : '❌ INCORRECT'}
+            </Text>
+          </View>
+
+          {/* Answer Analysis */}
+          <View style={styles.answerAnalysis}>
+            <Text style={styles.analysisTitle}>Answer Analysis:</Text>
+
+            {currentQuestionResult.allAnswers.map((answer) => {
+              const isUserSelected = currentQuestionResult.userAnswers.includes(answer.ID);
+              const isCorrectAnswer = currentQuestionResult.correctAnswers.some(ca => ca.ID === answer.ID);
+
+              return (
+                <View
+                  key={answer.ID}
+                  style={[
+                    styles.analysisAnswer,
+                    isUserSelected && styles.userSelectedAnswer,
+                    isCorrectAnswer && styles.correctAnalysisAnswer,
+                  ]}
+                >
+                  <Text style={[
+                    styles.analysisAnswerText,
+                    isUserSelected && styles.userSelectedText,
+                    isCorrectAnswer && styles.correctAnalysisText,
+                  ]}>
+                    {answer.text}
+                    {isUserSelected && ' 👆 (You selected)'}
+                    {isCorrectAnswer && ' ✅ (Correct)'}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        </ScrollView>
+
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={styles.nextButton}
+            onPress={nextQuestion}
+          >
+            <Text style={styles.nextButtonText}>
+              {currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Continue'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   // Quiz Screen
   if (currentView === 'quiz' && questions.length > 0) {
     const currentQuestion = questions[currentQuestionIndex];
     const selectedAnswerData = selectedAnswers[currentQuestionIndex];
 
-    // Better logic to detect multiple choice: check if multiple answers are correct
-    const correctAnswersCount = currentQuestion.answers?.filter(answer => answer.iscorrect || answer.IsCorrect).length || 0;
-    const isMultipleChoice = correctAnswersCount > 1;
-
-    // Handle both single and multiple selections
-    const selectedAnswerIds = isMultipleChoice && Array.isArray(selectedAnswerData) ?
-      selectedAnswerData :
-      (selectedAnswerData ? [selectedAnswerData] : []);
+    // Always treat as potentially multiple choice - user can select multiple answers
+    const selectedAnswerIds = Array.isArray(selectedAnswerData) ? selectedAnswerData : (selectedAnswerData ? [selectedAnswerData] : []);
 
     return (
       <SafeAreaView style={styles.container}>
@@ -568,33 +670,39 @@ export default function App() {
         <ScrollView style={styles.content}>
           <Text style={styles.questionText}>{currentQuestion.questionText}</Text>
 
-          {/* Answer feedback display */}
-          {showAnswerFeedback && answerFeedback[currentQuestionIndex] && (
-            <View style={[
-              styles.feedbackContainer,
-              answerFeedback[currentQuestionIndex]?.isCorrect
-                ? styles.correctFeedback
-                : styles.incorrectFeedback
-            ]}>
-              <Text style={styles.feedbackText}>
-                {answerFeedback[currentQuestionIndex]?.isCorrect
-                  ? '✅ Correct!'
-                  : '❌ Incorrect'}
-              </Text>
-            </View>
-          )}
+          {/* No immediate feedback - show results after submission */}
 
           <View style={styles.answersContainer}>
-            {isMultipleChoice && (
-              <Text style={styles.instructionText}>
-                💡 You can select multiple answers for this question
-              </Text>
-            )}
+            <Text style={styles.instructionText}>
+              💡 Select your answer(s) and click Submit ({selectedAnswerIds.length} selected)
+            </Text>
             {currentQuestion.answers?.map((answer) => {
               const feedback = answerFeedback[currentQuestionIndex];
               const isSelected = selectedAnswerIds.includes(answer.ID);
-              const isCorrect = feedback?.correctAnswerId === answer.ID;
-              const isIncorrectSelection = feedback && isSelected && !feedback.isCorrect;
+
+              // Check if this answer is in the list of correct answers from API
+              const correctAnswerIds = feedback?.correctAnswers?.map(ca => ca.ID) || [];
+              const isCorrectAnswer = correctAnswerIds.includes(answer.ID);
+
+              // Debug logging for color coding
+              if (feedback && isSelected) {
+                console.log('🎨 Color coding check:', {
+                  answerId: answer.ID,
+                  isSelected,
+                  isCorrectAnswer,
+                  correctAnswerIds,
+                  isMultipleChoice,
+                  showCorrectFeedback,
+                  showIncorrectFeedback,
+                  answerText: answer.text
+                });
+              }
+
+              // No immediate feedback - just show selection state
+              var showCorrectFeedback = false;
+              var showIncorrectFeedback = false;
+              var showSelectedCorrectAnswer = false;
+              var showSelectedIncorrectAnswer = false;
 
               return (
                 <TouchableOpacity
@@ -602,8 +710,10 @@ export default function App() {
                   style={[
                     styles.answerButton,
                     isSelected && styles.selectedAnswer,
-                    feedback && isCorrect && styles.correctAnswer,
-                    feedback && isIncorrectSelection && styles.incorrectAnswer,
+                    showCorrectFeedback && styles.correctAnswer,
+                    showIncorrectFeedback && styles.incorrectAnswer,
+                    showSelectedCorrectAnswer && styles.correctAnswer,
+                    showSelectedIncorrectAnswer && styles.incorrectAnswer,
                   ]}
                   onPress={() => handleAnswerSelect(answer.ID)}
                 >
@@ -611,13 +721,15 @@ export default function App() {
                     style={[
                       styles.answerText,
                       isSelected && styles.selectedAnswerText,
-                      feedback && isCorrect && styles.correctAnswerText,
-                      feedback && isIncorrectSelection && styles.incorrectAnswerText,
+                      showCorrectFeedback && styles.correctAnswerText,
+                      showIncorrectFeedback && styles.incorrectAnswerText,
+                      showSelectedCorrectAnswer && styles.correctAnswerText,
+                      showSelectedIncorrectAnswer && styles.incorrectAnswerText,
                     ]}
                   >
                     {answer.text}
-                    {feedback && isCorrect && ' ✅'}
-                    {feedback && isIncorrectSelection && ' ❌'}
+                    {(showCorrectFeedback || showSelectedCorrectAnswer) && ' ✅'}
+                    {(showIncorrectFeedback || showSelectedIncorrectAnswer) && ' ❌'}
                   </Text>
                 </TouchableOpacity>
               );
@@ -629,13 +741,13 @@ export default function App() {
           <TouchableOpacity
             style={[
               styles.nextButton,
-              (selectedAnswerIds.length === 0 || (!isMultipleChoice && !buttonEnabled)) && styles.disabledButton,
+              selectedAnswerIds.length === 0 && styles.disabledButton,
             ]}
             onPress={nextQuestion}
-            disabled={selectedAnswerIds.length === 0 || (!isMultipleChoice && !buttonEnabled)}
+            disabled={selectedAnswerIds.length === 0}
           >
             <Text style={styles.nextButtonText}>
-              {currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next'}
+              Submit Answer
             </Text>
           </TouchableOpacity>
         </View>
@@ -948,30 +1060,46 @@ const styles = StyleSheet.create({
   correctAnswer: {
     backgroundColor: '#d4edda',
     borderColor: '#28a745',
+    borderWidth: 2,
+    shadowColor: '#28a745',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   incorrectAnswer: {
     backgroundColor: '#f8d7da',
     borderColor: '#dc3545',
+    borderWidth: 2,
+    shadowColor: '#dc3545',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   correctAnswerText: {
     color: '#155724',
     fontWeight: 'bold',
+    fontSize: 16,
   },
   incorrectAnswerText: {
     color: '#721c24',
     fontWeight: 'bold',
+    fontSize: 16,
   },
   instructionText: {
     fontSize: 14,
-    color: '#6c757d',
-    fontStyle: 'italic',
+    color: '#495057',
+    fontWeight: '600',
     textAlign: 'center',
     marginBottom: 15,
-    backgroundColor: '#f8f9fa',
-    padding: 10,
+    backgroundColor: '#fff3cd',
+    padding: 12,
     borderRadius: 8,
     borderLeftWidth: 4,
-    borderLeftColor: '#007AFF',
+    borderLeftColor: '#ffc107',
+    borderWidth: 1,
+    borderColor: '#ffeaa7',
   },
   scoreContainer: {
     flexDirection: 'row',
@@ -991,5 +1119,62 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#007AFF',
+  },
+  resultContainer: {
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  correctResult: {
+    backgroundColor: '#d4edda',
+    borderColor: '#28a745',
+    borderWidth: 2,
+  },
+  incorrectResult: {
+    backgroundColor: '#f8d7da',
+    borderColor: '#dc3545',
+    borderWidth: 2,
+  },
+  resultText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  answerAnalysis: {
+    marginTop: 20,
+  },
+  analysisTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#2c3e50',
+  },
+  analysisAnswer: {
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 10,
+    backgroundColor: '#f8f9fa',
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  userSelectedAnswer: {
+    backgroundColor: '#e3f2fd',
+    borderColor: '#2196f3',
+  },
+  correctAnalysisAnswer: {
+    backgroundColor: '#e8f5e8',
+    borderColor: '#4caf50',
+  },
+  analysisAnswerText: {
+    fontSize: 16,
+    color: '#495057',
+  },
+  userSelectedText: {
+    color: '#1976d2',
+    fontWeight: '600',
+  },
+  correctAnalysisText: {
+    color: '#388e3c',
+    fontWeight: '600',
   },
 });

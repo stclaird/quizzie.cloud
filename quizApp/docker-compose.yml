@@ -8,13 +8,12 @@ services:
       - "8080:8080"
     environment:
       - ENV=production
-      - QUESTION_PATH=https://github.com/stclaird/questionPack/releases/download/v1.0.2/questionPack-latest.zip
+      - QUESTION_PATH=/project/api/questionPack/gcp-cloud-armour-70c8843a-66ca-4715-885e-1ea69b3ed9e4.json
     volumes:
-      - ./api/questionPack:/project/api/questionPack:ro
+      - ../questionPack:/project/api/questionPack:ro
     restart: unless-stopped
     networks:
       - quizzie-network
-
 networks:
   quizzie-network:
     driver: bridge

@@ -78,12 +78,17 @@ func createQuestion(ctx *gin.Context) {
 
 		questionOut := questionsOut.Questions[i]
 
-		// Only override category/subcategory if AI didn't provide them or they're empty
-		if questionOut.Category == "" {
+		// Use our parsed categories if we have them, otherwise use AI's categories as fallback
+		if questionCategory != "" && questionCategory != "General" {
 			questionOut.Category = questionCategory
+		} else if questionOut.Category == "" {
+			questionOut.Category = "General"
 		}
-		if questionOut.Subcategory == "" {
+
+		if questionSubCategory != "" && questionSubCategory != "General" {
 			questionOut.Subcategory = questionSubCategory
+		} else if questionOut.Subcategory == "" {
+			questionOut.Subcategory = "General"
 		}
 
 		questionOut.DateAdded = createDate()
@@ -120,5 +125,7 @@ func createQuestion(ctx *gin.Context) {
 	}
 	fmt.Printf("Successfully wrote %d bytes to %s\n", len(questionsOutFileBytes), writeFileName)
 
-    ctx.JSON(http.StatusOK, questionsOut)
+    // Return the corrected questions with proper categories
+    correctedResponse := models.Questions{Questions: questionsOutFile}
+    ctx.JSON(http.StatusOK, correctedResponse)
 }
