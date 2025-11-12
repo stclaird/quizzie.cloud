@@ -27,7 +27,7 @@ func SortString(w string) string {
 func removeCorrectAnswerfield(questions []models.Question) (questionsNoAnswers []models.QuestionNoCorrectAnswer) {
 	//Database retrieves objects including their correct answers - we need to copy this to an object with no correct answers
 	//before sending it to the user. otherwise they can cheat!
-	
+
 	for _, question := range questions { //Copying by loop
 		var questionnoanswer models.QuestionNoCorrectAnswer
 		questionnoanswer.ID = question.ID
@@ -35,13 +35,13 @@ func removeCorrectAnswerfield(questions []models.Question) (questionsNoAnswers [
 		questionnoanswer.Subcategory = question.Subcategory
 		questionnoanswer.Text = question.Text
 		questionnoanswer.Type = question.Type
-		
+
 		// Create answers slice
 		var answers []struct {
 			ID   uint
 			Text string `json:"text"`
 		}
-		
+
 		for _, answer := range question.Answers {
 			a := struct {
 				ID   uint
@@ -52,12 +52,12 @@ func removeCorrectAnswerfield(questions []models.Question) (questionsNoAnswers [
 			}
 			answers = append(answers, a)
 		}
-		
+
 		// Shuffle the answers to prevent predictable ordering
 		rand.Shuffle(len(answers), func(i, j int) {
 			answers[i], answers[j] = answers[j], answers[i]
 		})
-		
+
 		questionnoanswer.Answers = answers
 		questionsNoAnswers = append(questionsNoAnswers, questionnoanswer)
 	}
