@@ -8,7 +8,8 @@ services:
       - "8080:8080"
     environment:
       - ENV=production
-      - QUESTION_PATH=/project/api/questionPack/gcp-cloud-armour-70c8843a-66ca-4715-885e-1ea69b3ed9e4.json
+      # - QUESTION_PATH=/project/api/questionPack/gcp-cloud-armour-70c8843a-66ca-4715-885e-1ea69b3ed9e4.json
+      - QUESTION_PATH=https://github.com/stclaird/questionPack/releases/latest/download/questionPack-latest.zip
     volumes:
       - ../questionPack:/project/api/questionPack:ro
     restart: unless-stopped
