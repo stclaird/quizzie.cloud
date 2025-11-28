@@ -67,4 +67,22 @@ curl -L -X POST http://localhost:5001/questions \
     "subcategory" : "cloud-armour"
 }'
 
+curl -L -X POST http://localhost:5001/questions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "questionText": "gcp iam projects and folders",
+    "numquestions" : 50,
+    "category" : "gcp",
+    "subcategory" : "iam"
+}'
+
+curl -L -X POST http://localhost:5001/questions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "questionText": "gcp iam",
+    "numquestions" : 50,
+    "category" : "gcp",
+    "subcategory" : "iam"
+}'
+
 ```
