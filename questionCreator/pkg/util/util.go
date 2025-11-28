@@ -9,6 +9,8 @@ type Config struct{
 	Port string
 	Questionsdir string
 	Geminimodel string
+	LogLevel string
+	Environment string
 }
 
 func LoadConfig(path string) (config Config, err error) {

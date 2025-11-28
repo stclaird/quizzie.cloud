@@ -12,6 +12,8 @@ type Config struct {
 	port         string
 	dbUrl        string
 	questionPath string
+	logLevel     string
+	environment  string
 }
 
 func GetConfig() Config {
@@ -26,11 +28,15 @@ func GetConfig() Config {
 	viper.SetDefault("PORT", ":8080")
 	viper.SetDefault("DB_URL", "quizzie.sqlite.db")
 	viper.SetDefault("QUESTION_PATH", "./questionPack")
+	viper.SetDefault("LOG_LEVEL", "info")
+	viper.SetDefault("APP_ENV", "development")
 
 	// Get values (env vars will override .env file values, which override defaults)
 	port := viper.GetString("PORT")
 	dbUrl := viper.GetString("DB_URL")
 	questionPath := viper.GetString("QUESTION_PATH")
+	logLevel := viper.GetString("LOG_LEVEL")
+	environment := viper.GetString("APP_ENV")
 
 	// Ensure port has colon prefix
 	if !strings.HasPrefix(port, ":") {
@@ -44,6 +50,8 @@ func GetConfig() Config {
 		port:         port,
 		dbUrl:        dbUrl,
 		questionPath: questionPath,
+		logLevel:     logLevel,
+		environment:  environment,
 	}
 }
 

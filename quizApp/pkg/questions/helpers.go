@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/stclaird/quizzie.cloud/pkg/common/models"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -81,7 +82,7 @@ func InitQuestions(questionPack string, db *gorm.DB) (allQuestions []models.Ques
 
 	// Final fallback if no questions loaded at all
 	if len(allQuestions) == 0 {
-		log.Println("No questions loaded from any source, using emergency fallback")
+		zap.L().Warn("No questions loaded from any source, using emergency fallback")
 		allQuestions = loadEmergencyFallback(h)
 	}
 
@@ -154,13 +155,13 @@ func loadQuestionsFromURL(url string, h *handler) []models.Question {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Println("Error fetching from URL:", err)
+		zap.L().Error("Error fetching from URL", zap.Error(err))
 		return allQuestions // Return empty slice instead of crashing
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		log.Printf("HTTP error: %d %s", resp.StatusCode, resp.Status)
+		zap.L().Error("HTTP error", zap.Int("status_code", resp.StatusCode), zap.String("status", resp.Status))
 		return allQuestions
 	}
 
@@ -188,7 +189,7 @@ func loadQuestionsFromURL(url string, h *handler) []models.Question {
 func processJSONFile(filePath string, h *handler, isLocal bool) []models.Question {
 	jsonFile, err := os.Open(filePath)
 	if err != nil {
-		log.Println("Error opening file:", err)
+		zap.L().Error("Error opening file", zap.Error(err))
 		return nil
 	}
 	defer jsonFile.Close()
@@ -209,7 +210,7 @@ func processJSONReader(reader io.Reader, h *handler, source string) []models.Que
 	}
 
 	if err := json.Unmarshal(byteValue, &questionsObj); err != nil {
-		log.Println("Error unmarshaling JSON:", err)
+		zap.L().Error("Error unmarshaling JSON", zap.Error(err))
 		return nil
 	}
 
@@ -231,7 +232,7 @@ func processZipReader(reader io.Reader, h *handler, source string) []models.Ques
 	// Read the entire response body into memory
 	data, err := io.ReadAll(reader)
 	if err != nil {
-		log.Printf("Error reading ZIP data from %s: %v", source, err)
+		zap.L().Error("Error reading ZIP data", zap.String("source", source), zap.Error(err))
 		return allQuestions
 	}
 

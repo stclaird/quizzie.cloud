@@ -11,6 +11,7 @@ import (
 	"github.com/google/generative-ai-go/genai"
 	"github.com/stclaird/quizzie.cloud/questionCreator/pkg/models"
 	"github.com/stclaird/quizzie.cloud/questionCreator/pkg/util"
+	"go.uber.org/zap"
 	"google.golang.org/api/option"
 )
 
@@ -65,15 +66,14 @@ func askAi (questionIn models.QuestionIn) models.Questions {
 	// Ask the model to respond with JSON.
 	model.ResponseMIMEType = "application/json"
 	prompt :=  createPrompt(questionIn)
-	fmt.Printf("Sending prompt to AI: %s\n", prompt)
+	zap.L().Debug("Sending prompt to AI", zap.String("prompt", prompt))
 	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil {
-		fmt.Printf("Error calling AI API: %v\n", err)
+		zap.L().Error("Error calling AI API", zap.Error(err))
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Response received from AI\n")
-	fmt.Printf("Number of candidates: %d\n", len(resp.Candidates))
+	zap.L().Info("Response received from AI", zap.Int("candidate_count", len(resp.Candidates)))
 
 	if len(resp.Candidates) == 0 {
 		fmt.Printf("No candidates returned from AI\n")
