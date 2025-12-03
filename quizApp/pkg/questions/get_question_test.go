@@ -2,6 +2,7 @@ package questions
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -83,7 +84,7 @@ func TestAnswers(t *testing.T) {
 	db.Where("is_correct = ?", true).First(&correctAnswer)
 
 	// Test correct answer
-	req, _ := http.NewRequest("GET", "/questions/answer/1/"+string(rune(correctAnswer.ID)), nil)
+	req, _ := http.NewRequest("GET", fmt.Sprintf("/questions/answer/1/%d", correctAnswer.ID), nil)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 

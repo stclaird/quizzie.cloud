@@ -94,9 +94,9 @@ func TestGetQuestionsCatSubCat(t *testing.T) {
 
 	h := handler{DB: db}
 	router := gin.New()
-	router.GET("/questions/catsubcat/:catsubcat", h.GetQuestionsByCategoryAndSubcategory)
+	router.GET("/questions/:category/:subcategory", h.GetQuestionsByCategoryAndSubcategory)
 
-	req, _ := http.NewRequest("GET", "/questions/catsubcat/Science-Physics", nil)
+	req, _ := http.NewRequest("GET", "/questions/Science/Physics", nil)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 

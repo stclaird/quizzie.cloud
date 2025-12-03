@@ -10,6 +10,23 @@ builddocker:
 buildui:
 	cd ui/ && yarn build
 
+# Testing commands
+test:
+	go test ./...
+
+test-verbose:
+	go test -v ./...
+
+test-coverage:
+	go test -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out -o coverage.html
+
+integration-test:
+	go test -tags=integration ./api/... -v
+
+integration-test-docker:
+	./scripts/integration-test.sh
+
 # Docker Compose commands
 compose-up:
 	docker-compose up -d

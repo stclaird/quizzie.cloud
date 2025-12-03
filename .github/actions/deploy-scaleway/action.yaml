@@ -1,0 +1,122 @@
+name: 'Deploy to Scaleway Serverless Containers'
+description: 'Build and deploy a Docker image to Scaleway Serverless Containers'
+author: 'stclaird'
+
+inputs:
+  registry:
+    description: 'Scaleway container registry URL'
+    required: true
+  registry-username:
+    description: 'Registry username (typically "nologin")'
+    required: true
+    default: 'nologin'
+  registry-password:
+    description: 'Scaleway secret key for registry authentication'
+    required: true
+  context:
+    description: 'Docker build context path'
+    required: true
+    default: '.'
+  image-name:
+    description: 'Image name (without registry)'
+    required: true
+  container-id:
+    description: 'Scaleway container ID to update'
+    required: true
+  region:
+    description: 'Scaleway region'
+    required: true
+    default: 'fr-par'
+  environment-variables:
+    description: 'Environment variables to set (comma-separated KEY=VALUE pairs)'
+    required: false
+    default: ''
+  scw-access-key:
+    description: 'Scaleway access key'
+    required: true
+  scw-secret-key:
+    description: 'Scaleway secret key'
+    required: true
+  scw-project-id:
+    description: 'Scaleway project ID'
+    required: true
+  skip-deploy:
+    description: 'Skip deployment step (useful for PRs)'
+    required: false
+    default: 'false'
+
+outputs:
+  image-tag:
+    description: 'Full image tag that was deployed'
+    value: ${{ steps.tags.outputs.full-tag }}
+  sha-tag:
+    description: 'SHA-based image tag'
+    value: ${{ steps.tags.outputs.sha-tag }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Generate image tags
+      id: tags
+      shell: bash
+      run: |
+        SHA_TAG="${{ inputs.registry }}/${{ inputs.image-name }}:${{ github.sha }}"
+        LATEST_TAG="${{ inputs.registry }}/${{ inputs.image-name }}:latest"
+        echo "sha-tag=${SHA_TAG}" >> $GITHUB_OUTPUT
+        echo "latest-tag=${LATEST_TAG}" >> $GITHUB_OUTPUT
+        echo "full-tag=${SHA_TAG}" >> $GITHUB_OUTPUT
+        echo "tags=${LATEST_TAG}
+        ${SHA_TAG}" >> $GITHUB_OUTPUT
+
+    - name: Log in to Scaleway Container Registry
+      if: inputs.skip-deploy == 'false'
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ inputs.registry }}
+        username: ${{ inputs.registry-username }}
+        password: ${{ inputs.registry-password }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and push Docker image
+      if: inputs.skip-deploy == 'false'
+      uses: docker/build-push-action@v5
+      with:
+        context: ${{ inputs.context }}
+        push: true
+        tags: ${{ steps.tags.outputs.tags }}
+        cache-from: type=registry,ref=${{ steps.tags.outputs.latest-tag }}
+        cache-to: type=inline
+
+    - name: Install Scaleway CLI
+      if: inputs.skip-deploy == 'false'
+      shell: bash
+      run: |
+        curl -o scw https://github.com/scaleway/scaleway-cli/releases/latest/download/scaleway-cli_2.22.0_linux_amd64
+        chmod +x scw
+        sudo mv scw /usr/local/bin/
+        scw version
+
+    - name: Deploy to Scaleway Serverless Containers
+      if: inputs.skip-deploy == 'false'
+      shell: bash
+      env:
+        SCW_ACCESS_KEY: ${{ inputs.scw-access-key }}
+        SCW_SECRET_KEY: ${{ inputs.scw-secret-key }}
+        SCW_DEFAULT_PROJECT_ID: ${{ inputs.scw-project-id }}
+      run: |
+        ENV_VARS="${{ inputs.environment-variables }}"
+
+        # Build the update command
+        CMD="scw container container update ${{ inputs.container-id }} \
+          --registry-image=${{ steps.tags.outputs.sha-tag }} \
+          --region=${{ inputs.region }}"
+
+        # Add environment variables if provided
+        if [ -n "$ENV_VARS" ]; then
+          CMD="$CMD --environment-variables=\"$ENV_VARS\""
+        fi
+
+        echo "Executing: $CMD"
+        eval $CMD
